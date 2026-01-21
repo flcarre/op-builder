@@ -2,5 +2,5 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "installCommand": "pnpm install",
-  "buildCommand": "cd ../.. && pnpm build --filter=@crafted/domination"
+  "buildCommand": "cd ../.. && pnpm --filter=@crafted/database db:generate && pnpm build --filter=@crafted/domination"
 }
