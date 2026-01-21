@@ -1,0 +1,20 @@
+{
+  "name": "@crafted/mcp-orchestrator",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "MCP Server for Crafted Orchestrator (workflow execution, agent coordination)",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "yaml": "^2.3.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3"
+  }
+}

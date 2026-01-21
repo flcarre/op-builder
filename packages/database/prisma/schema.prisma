@@ -1,0 +1,440 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String         @id @default(cuid())
+  email            String         @unique
+  name             String?
+  supabaseId       String?        @unique
+  stripeCustomerId String?        @unique
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  subscriptions    Subscription[]
+  payments         Payment[]
+  teams            Team[]
+}
+
+model Subscription {
+  id                   String    @id @default(cuid())
+  userId               String
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeSubscriptionId String    @unique
+  stripePriceId        String
+  stripeProductId      String
+  status               String
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean   @default(false)
+  canceledAt           DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model Payment {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripePaymentId   String   @unique
+  amount            Int
+  currency          String   @default("usd")
+  status            String
+  receiptUrl        String?
+  stripeInvoiceId   String?
+  subscriptionId    String?
+  createdAt         DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Example {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Team {
+  id               String          @id @default(cuid())
+  name             String
+  slug             String          @unique
+  description      String?
+  logoUrl          String?
+  color            String          @default("#3b82f6")
+  ownerId          String
+  owner            User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members          TeamMember[]
+  operationTeams   OperationTeam[]
+  createdOperations Operation[]    @relation("CreatorTeam")
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([ownerId])
+  @@index([slug])
+}
+
+enum TeamMemberRole {
+  ADMIN
+  CAPTAIN
+  PLAYER
+}
+
+model TeamMember {
+  id          String         @id @default(cuid())
+  teamId      String
+  team        Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  name        String
+  callsign    String
+  email       String?
+  phone       String?
+  role        TeamMemberRole @default(PLAYER)
+  qrCodeToken String         @unique @default(cuid())
+  checkIns    CheckIn[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([teamId])
+  @@index([qrCodeToken])
+}
+
+enum OperationStatus {
+  DRAFT
+  PUBLISHED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum OperationTeamRole {
+  CREATOR
+  CO_ADMIN
+  VIEWER
+}
+
+model Operation {
+  id              String            @id @default(cuid())
+  name            String
+  description     String?
+  date            DateTime
+  endDate         DateTime
+  latitude        Float?
+  longitude       Float?
+  coverImageUrl   String?
+  status          OperationStatus   @default(DRAFT)
+  creatorTeamId   String
+  creatorTeam     Team              @relation("CreatorTeam", fields: [creatorTeamId], references: [id], onDelete: Cascade)
+  operationTeams  OperationTeam[]
+  camps           Camp[]
+  objectives      Objective[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([creatorTeamId])
+  @@index([status])
+  @@index([date])
+}
+
+model OperationTeam {
+  id          String                 @id @default(cuid())
+  operationId String
+  operation   Operation              @relation(fields: [operationId], references: [id], onDelete: Cascade)
+  teamId      String
+  team        Team                   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  role        OperationTeamRole      @default(VIEWER)
+  invitedAt   DateTime               @default(now())
+  acceptedAt  DateTime?
+  campTeam    CampTeam?
+  completions ObjectiveCompletion[]
+  attempts    ObjectiveAttempt[]
+  sabotages   ObjectiveSabotage[]
+  gpsCaptures GPSCapture[]
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+
+  @@unique([operationId, teamId])
+  @@index([operationId])
+  @@index([teamId])
+}
+
+model Camp {
+  id          String       @id @default(cuid())
+  operationId String
+  operation   Operation    @relation(fields: [operationId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  color       String
+  order       Int          @default(0)
+  campTeams   CampTeam[]
+  objectives  Objective[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([operationId])
+}
+
+model CampTeam {
+  id              String        @id @default(cuid())
+  campId          String
+  camp            Camp          @relation(fields: [campId], references: [id], onDelete: Cascade)
+  operationTeamId String        @unique
+  operationTeam   OperationTeam @relation(fields: [operationTeamId], references: [id], onDelete: Cascade)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([campId, operationTeamId])
+  @@index([campId])
+  @@index([operationTeamId])
+}
+
+enum ObjectiveType {
+  QR_SIMPLE
+  QR_ENIGMA
+  GPS_CAPTURE
+  VIP_ELIMINATION
+  ITEM_COLLECTION
+  MULTI_STEP_ENIGMA
+  POINT_DEFENSE
+  TIMED_SABOTAGE
+  CONDITIONAL
+  MORSE_RADIO
+  ANTENNA_HACK
+  NEGOTIATION
+  RANDOM_POOL
+  TIME_RACE
+  LIVE_EVENT
+  PHYSICAL_CODE
+}
+
+model Objective {
+  id                String                 @id @default(cuid())
+  operationId       String
+  operation         Operation              @relation(fields: [operationId], references: [id], onDelete: Cascade)
+  type              ObjectiveType
+  title             String
+  description       String?
+  points            Int                    @default(100)
+  campId            String?
+  camp              Camp?                  @relation(fields: [campId], references: [id], onDelete: SetNull)
+  order             Int                    @default(0)
+  qrCodeToken       String                 @unique @default(cuid())
+  parentObjectiveId String?
+  parentObjective   Objective?             @relation("ObjectiveDependencies", fields: [parentObjectiveId], references: [id], onDelete: SetNull)
+  childObjectives   Objective[]            @relation("ObjectiveDependencies")
+  completions       ObjectiveCompletion[]
+  attempts          ObjectiveAttempt[]
+  sabotages         ObjectiveSabotage[]
+  gpsCaptures       GPSCapture[]
+  config            Json?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  @@index([operationId])
+  @@index([campId])
+  @@index([qrCodeToken])
+  @@index([parentObjectiveId])
+}
+
+model CheckIn {
+  id          String     @id @default(cuid())
+  memberId    String
+  member      TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  latitude    Float?
+  longitude   Float?
+  deviceInfo  String?
+  checkedInAt DateTime   @default(now())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([memberId])
+  @@index([checkedInAt])
+}
+
+model ObjectiveCompletion {
+  id              String        @id @default(cuid())
+  objectiveId     String
+  objective       Objective     @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
+  operationTeamId String
+  operationTeam   OperationTeam @relation(fields: [operationTeamId], references: [id], onDelete: Cascade)
+  completedBy     String?
+  latitude        Float?
+  longitude       Float?
+  deviceInfo      String?
+  completedAt     DateTime      @default(now())
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([objectiveId, operationTeamId])
+  @@index([objectiveId])
+  @@index([operationTeamId])
+  @@index([completedAt])
+}
+
+model ObjectiveAttempt {
+  id              String        @id @default(cuid())
+  objectiveId     String
+  objective       Objective     @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
+  operationTeamId String
+  operationTeam   OperationTeam @relation(fields: [operationTeamId], references: [id], onDelete: Cascade)
+  attemptedCode   String
+  success         Boolean       @default(false)
+  attemptedAt     DateTime      @default(now())
+  createdAt       DateTime      @default(now())
+
+  @@index([objectiveId])
+  @@index([operationTeamId])
+  @@index([attemptedAt])
+}
+
+enum SabotageStatus {
+  PENDING
+  COMPLETED
+  DEFUSED
+}
+
+model ObjectiveSabotage {
+  id              String          @id @default(cuid())
+  objectiveId     String
+  objective       Objective       @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
+  operationTeamId String
+  operationTeam   OperationTeam   @relation(fields: [operationTeamId], references: [id], onDelete: Cascade)
+  status          SabotageStatus  @default(PENDING)
+  startedAt       DateTime        @default(now())
+  completedAt     DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([objectiveId])
+  @@index([operationTeamId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+enum GPSCaptureStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
+
+model GPSCapture {
+  id              String           @id @default(cuid())
+  objectiveId     String
+  objective       Objective        @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
+  operationTeamId String
+  operationTeam   OperationTeam    @relation(fields: [operationTeamId], references: [id], onDelete: Cascade)
+  status          GPSCaptureStatus @default(IN_PROGRESS)
+  startLatitude   Float
+  startLongitude  Float
+  startedAt       DateTime         @default(now())
+  completedAt     DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@index([objectiveId])
+  @@index([operationTeamId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+// ============================================
+// DOMINATION MODE
+// ============================================
+
+enum DominationSessionStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+}
+
+model DominationSession {
+  id              String                   @id @default(cuid())
+  name            String
+  description     String?
+  status          DominationSessionStatus  @default(DRAFT)
+  pointsPerTick   Int                      @default(1)
+  tickIntervalSec Int                      @default(10)
+  durationMinutes Int?
+  startedAt       DateTime?
+  endedAt         DateTime?
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+  points          DominationPoint[]
+  teams           DominationTeam[]
+  captures        DominationCapture[]
+  scores          DominationScore[]
+
+  @@index([status])
+}
+
+model DominationTeam {
+  id        String            @id @default(cuid())
+  sessionId String
+  session   DominationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  name      String
+  color     String            @default("#3b82f6")
+  order     Int               @default(0)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  captures  DominationCapture[]
+  scores    DominationScore[]
+
+  @@index([sessionId])
+}
+
+model DominationPoint {
+  id          String              @id @default(cuid())
+  sessionId   String
+  session     DominationSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  qrToken     String              @unique @default(cuid())
+  latitude    Float?
+  longitude   Float?
+  order       Int                 @default(0)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  captures    DominationCapture[]
+
+  @@index([sessionId])
+  @@index([qrToken])
+}
+
+model DominationCapture {
+  id         String            @id @default(cuid())
+  pointId    String
+  point      DominationPoint   @relation(fields: [pointId], references: [id], onDelete: Cascade)
+  teamId     String
+  team       DominationTeam    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  sessionId  String
+  session    DominationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  capturedAt DateTime          @default(now())
+  capturedBy String?
+  createdAt  DateTime          @default(now())
+
+  @@index([pointId])
+  @@index([teamId])
+  @@index([sessionId])
+  @@index([capturedAt])
+}
+
+model DominationScore {
+  id        String            @id @default(cuid())
+  sessionId String
+  session   DominationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  teamId    String
+  team      DominationTeam    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  points    Int               @default(0)
+  updatedAt DateTime          @updatedAt
+  createdAt DateTime          @default(now())
+
+  @@unique([sessionId, teamId])
+  @@index([sessionId])
+  @@index([teamId])
+}

@@ -1,0 +1,57 @@
+{
+  "name": "balanced-web",
+  "level": "balanced",
+  "platform": "web",
+  "description": "Balanced quality level - 3-layer architecture with pragmatic quality",
+  "rules": {
+    "maxLinesPerFunction": 50,
+    "maxParameters": 3,
+    "maxCyclomaticComplexity": 10,
+    "duplicationThreshold": 2,
+    "testCoverage": 70,
+    "solid": "full",
+    "comments": "why-required"
+  },
+  "architecture": {
+    "type": "3-layer",
+    "layers": [
+      {
+        "name": "routers",
+        "path": "packages/api/src/routers",
+        "maxLinesPerProcedure": 20,
+        "responsibility": "Thin orchestration layer - validation only"
+      },
+      {
+        "name": "services",
+        "path": "packages/services/src",
+        "maxLinesPerFunction": 50,
+        "responsibility": "Business logic - pure functions when possible"
+      },
+      {
+        "name": "repositories",
+        "path": "packages/database/src/repositories",
+        "responsibility": "Data access - Prisma queries"
+      }
+    ]
+  },
+  "testing": {
+    "strategy": "test-after-generation",
+    "minCoverage": 70,
+    "required": [
+      "Unit tests for services (100% public methods)",
+      "tRPC routers (happy path + errors)",
+      "Component tests (critical components)",
+      "E2E (auth + checkout)",
+      "Integration tests (with MSW)"
+    ]
+  },
+  "packages": [
+    "api",
+    "services",
+    "validators",
+    "database",
+    "auth",
+    "payments",
+    "ui"
+  ]
+}

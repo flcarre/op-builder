@@ -1,0 +1,129 @@
+{
+  "mcpServers": {
+    "crafted-context": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/Users/floriancarre/maker/op-builder/.ai/context/dist/mcp-server.js"
+      ],
+      "env": {}
+    },
+    "filesystem": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/floriancarre/maker/op-builder"
+      ],
+      "env": {}
+    },
+    "git": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-git",
+        "--repository",
+        "/Users/floriancarre/maker/op-builder"
+      ],
+      "env": {}
+    },
+    "github": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {}
+    },
+    "sequential-thinking": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "env": {}
+    },
+    "supabase": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase"
+      ],
+      "env": {}
+    },
+    "shadcn": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "shadcn@latest",
+        "mcp"
+      ],
+      "env": {}
+    },
+    "chrome-devtools": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ],
+      "env": {}
+    },
+    "crafted-cli": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/Users/floriancarre/maker/op-builder/.ai/mcp-servers/crafted-cli/dist/index.js"
+      ],
+      "env": {}
+    },
+    "rules-validator": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/Users/floriancarre/maker/op-builder/.ai/mcp-servers/rules-validator/dist/index.js"
+      ],
+      "env": {}
+    },
+    "architecture-guard": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/Users/floriancarre/maker/op-builder/.ai/mcp-servers/architecture-guard/dist/index.js"
+      ],
+      "env": {}
+    },
+    "typescript": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/Users/floriancarre/maker/op-builder/.ai/mcp-servers/development/typescript/dist/index.js"
+      ],
+      "env": {},
+      "disabled": true
+    },
+    "vitest": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/Users/floriancarre/maker/op-builder/.ai/mcp-servers/testing/vitest/dist/index.js"
+      ],
+      "env": {},
+      "disabled": true
+    },
+    "orchestrator": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/Users/floriancarre/maker/op-builder/.ai/mcp-servers/crafted/orchestrator/dist/index.js"
+      ],
+      "env": {}
+    }
+  }
+}

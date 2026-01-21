@@ -1,0 +1,24 @@
+{
+  "name": "@crafted/context-manager",
+  "version": "0.1.0",
+  "description": "Context Manager MCP for Crafted SaaS - Loads and caches project context",
+  "type": "module",
+  "main": "dist/mcp-server.js",
+  "bin": {
+    "crafted-context-mcp": "dist/mcp-server.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/mcp-server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "glob": "^11.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.10",
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,0 +1,36 @@
+import type { Metadata, Viewport } from 'next';
+import { TRPCProvider } from '@/trpc/provider';
+import './globals.css';
+
+export const metadata: Metadata = {
+  title: 'Domination - Mode de jeu',
+  description: 'Mode Domination pour opérations Airsoft',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Domination',
+  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#020617',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="fr">
+      <body className="overscroll-none">
+        <TRPCProvider>{children}</TRPCProvider>
+      </body>
+    </html>
+  );
+}
