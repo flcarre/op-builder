@@ -3,6 +3,7 @@
 import { use, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { api } from '@/trpc/client';
+import type { RouterOutputs } from '@crafted/api';
 import {
   Flag,
   Users,
@@ -20,6 +21,10 @@ import {
   DownloadSimple,
 } from '@phosphor-icons/react';
 import QRCode from 'qrcode';
+
+type DominationSession = NonNullable<RouterOutputs['domination']['getSession']>;
+type DominationTeam = DominationSession['teams'][number];
+type DominationPoint = DominationSession['points'][number];
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -312,7 +317,7 @@ export default function SessionDetailPage({ params }: PageProps) {
                   <p className="text-gray-400 text-sm">Aucune équipe</p>
                 </div>
               )}
-              {session.teams.map((team) => (
+              {session.teams.map((team: DominationTeam) => (
                 <div
                   key={team.id}
                   className="glass rounded-xl p-4 flex items-center justify-between"
@@ -376,7 +381,7 @@ export default function SessionDetailPage({ params }: PageProps) {
                   <p className="text-gray-400 text-sm">Aucun point</p>
                 </div>
               )}
-              {session.points.map((point) => (
+              {session.points.map((point: DominationPoint) => (
                 <div
                   key={point.id}
                   className="glass rounded-xl p-4"
