@@ -17,6 +17,7 @@ import {
   ShieldCheck,
 } from '@phosphor-icons/react';
 import { useState } from 'react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 type DominationSessionItem = NonNullable<RouterOutputs['domination']['getAllSessions']>[number];
 
@@ -107,28 +108,31 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-labs-black safe-area-inset">
+    <div className="min-h-screen bg-theme-primary safe-area-inset">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-labs-dark/90 backdrop-blur-lg border-b border-labs-terminal">
+      <header className="sticky top-0 z-10 bg-theme-secondary/90 backdrop-blur-lg border-b border-theme-accent">
         <div className="px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="w-9 h-9 flex items-center justify-center rounded-lg bg-labs-steel text-white active:bg-labs-terminal"
+              className="w-9 h-9 flex items-center justify-center rounded-lg bg-theme-tertiary text-theme-primary active:opacity-80"
             >
               <ArrowLeft size={18} />
             </Link>
-            <h1 className="text-lg font-bold text-white flex items-center gap-2 uppercase tracking-wider">
+            <h1 className="text-lg font-bold text-theme-primary flex items-center gap-2 uppercase tracking-wider">
               <ShieldCheck size={20} weight="fill" className="text-alert-red" />
               Centre de Commande
             </h1>
           </div>
-          <button
-            onClick={() => setShowCreateForm(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-lg btn-primary"
-          >
-            <Plus size={20} weight="bold" />
-          </button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className="w-9 h-9 flex items-center justify-center rounded-lg btn-primary"
+            >
+              <Plus size={20} weight="bold" />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -137,15 +141,15 @@ export default function AdminPage() {
         {showCreateForm && (
           <div className="fixed inset-0 bg-black/90 z-50 flex items-end sm:items-center justify-center p-4">
             <div
-              className="glass rounded-t-2xl sm:rounded-2xl w-full max-w-md p-5 border border-labs-terminal"
+              className="glass rounded-t-2xl sm:rounded-2xl w-full max-w-md p-5 border-theme-accent"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-lg font-semibold text-white mb-4 uppercase tracking-wide">
+              <h2 className="text-lg font-semibold text-theme-primary mb-4 uppercase tracking-wide">
                 Nouvelle Opération
               </h2>
               <form onSubmit={handleCreateSession} className="space-y-4">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1.5 uppercase tracking-widest">
+                  <label className="block text-xs text-theme-muted mb-1.5 uppercase tracking-widest">
                     Nom de l&apos;opération
                   </label>
                   <input
@@ -158,7 +162,7 @@ export default function AdminPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1.5 uppercase tracking-widest">
+                  <label className="block text-xs text-theme-muted mb-1.5 uppercase tracking-widest">
                     Durée (optionnel)
                   </label>
                   <div className="flex items-center gap-2">
@@ -171,9 +175,9 @@ export default function AdminPage() {
                       max={480}
                       className="input-labs flex-1 px-4 py-3"
                     />
-                    <span className="text-gray-400 text-sm uppercase">min</span>
+                    <span className="text-theme-muted text-sm uppercase">min</span>
                   </div>
-                  <p className="text-gray-500 text-xs mt-1.5">
+                  <p className="text-theme-muted text-xs mt-1.5">
                     Laissez vide pour une durée illimitée
                   </p>
                 </div>
@@ -181,7 +185,7 @@ export default function AdminPage() {
                   <button
                     type="button"
                     onClick={() => setShowCreateForm(false)}
-                    className="flex-1 bg-labs-steel active:bg-labs-terminal text-white py-3 rounded-xl font-semibold uppercase tracking-wider text-sm"
+                    className="flex-1 bg-theme-tertiary active:opacity-80 text-theme-primary py-3 rounded-xl font-semibold uppercase tracking-wider text-sm"
                   >
                     Annuler
                   </button>
@@ -200,17 +204,17 @@ export default function AdminPage() {
 
         {/* Sessions list */}
         {isLoading && (
-          <div className="glass p-8 rounded-xl text-center text-gray-400 border border-labs-terminal">
+          <div className="glass p-8 rounded-xl text-center text-theme-muted border-theme-accent">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-alert-red mx-auto mb-3" />
             <p className="text-sm uppercase tracking-widest">Chargement...</p>
           </div>
         )}
 
         {sessions?.length === 0 && !isLoading && (
-          <div className="glass p-8 rounded-xl text-center border border-labs-terminal">
-            <Flag size={48} className="text-gray-600 mx-auto mb-3" />
-            <p className="text-gray-400 mb-1 uppercase tracking-wide">Aucune opération</p>
-            <p className="text-gray-500 text-sm">
+          <div className="glass p-8 rounded-xl text-center border-theme-accent">
+            <Flag size={48} className="text-theme-muted mx-auto mb-3" />
+            <p className="text-theme-muted mb-1 uppercase tracking-wide">Aucune opération</p>
+            <p className="text-theme-muted text-sm">
               Déployez votre première opération pour commencer
             </p>
           </div>
@@ -218,10 +222,10 @@ export default function AdminPage() {
 
         <div className="space-y-3">
           {sessions?.map((session: DominationSessionItem) => (
-            <div key={session.id} className="glass rounded-xl overflow-hidden border border-labs-terminal">
+            <div key={session.id} className="glass rounded-xl overflow-hidden border-theme-accent">
               <Link
                 href={`/admin/sessions/${session.id}`}
-                className="flex items-center justify-between p-4 active:bg-labs-steel"
+                className="flex items-center justify-between p-4 active:opacity-80"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div
@@ -230,10 +234,10 @@ export default function AdminPage() {
                     }`}
                   />
                   <div className="min-w-0">
-                    <h3 className="text-base font-semibold text-white truncate uppercase tracking-wide">
+                    <h3 className="text-base font-semibold text-theme-primary truncate uppercase tracking-wide">
                       {session.name}
                     </h3>
-                    <div className="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wider">
+                    <div className="flex items-center gap-2 text-xs text-theme-muted uppercase tracking-wider">
                       <span>{getStatusLabel(session.status)}</span>
                       <span>•</span>
                       <span className="flex items-center gap-1 font-mono">
@@ -243,16 +247,16 @@ export default function AdminPage() {
                     </div>
                   </div>
                 </div>
-                <CaretRight size={18} className="text-gray-500 flex-shrink-0" />
+                <CaretRight size={18} className="text-theme-muted flex-shrink-0" />
               </Link>
 
               {/* Action buttons */}
-              <div className="flex border-t border-labs-terminal">
+              <div className="flex border-t border-theme-accent">
                 {session.status === 'DRAFT' && (
                   <>
                     <button
                       onClick={() => startSession.mutate({ id: session.id })}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 text-tactical-green active:bg-tactical-green/10 border-r border-labs-terminal uppercase text-xs tracking-wider font-semibold"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 text-tactical-green active:bg-tactical-green/10 border-r border-theme-accent uppercase text-xs tracking-wider font-semibold"
                     >
                       <PlayCircle size={18} weight="fill" />
                       <span>Lancer</span>
@@ -275,7 +279,7 @@ export default function AdminPage() {
                   <>
                     <button
                       onClick={() => pauseSession.mutate({ id: session.id })}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 text-alert-yellow active:bg-alert-yellow/10 border-r border-labs-terminal uppercase text-xs tracking-wider font-semibold"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 text-alert-yellow active:bg-alert-yellow/10 border-r border-theme-accent uppercase text-xs tracking-wider font-semibold"
                     >
                       <Pause size={18} weight="fill" />
                       <span>Pause</span>
@@ -298,7 +302,7 @@ export default function AdminPage() {
                   <>
                     <button
                       onClick={() => resumeSession.mutate({ id: session.id })}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 text-tactical-green active:bg-tactical-green/10 border-r border-labs-terminal uppercase text-xs tracking-wider font-semibold"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 text-tactical-green active:bg-tactical-green/10 border-r border-theme-accent uppercase text-xs tracking-wider font-semibold"
                     >
                       <Play size={18} weight="fill" />
                       <span>Reprendre</span>
@@ -318,7 +322,7 @@ export default function AdminPage() {
                 )}
 
                 {session.status === 'COMPLETED' && (
-                  <div className="flex-1 flex items-center justify-center py-3 text-gray-500 uppercase text-xs tracking-wider">
+                  <div className="flex-1 flex items-center justify-center py-3 text-theme-muted uppercase text-xs tracking-wider">
                     <span>Opération terminée</span>
                   </div>
                 )}

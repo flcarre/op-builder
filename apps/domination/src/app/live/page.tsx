@@ -15,6 +15,7 @@ import {
   CaretRight,
   Crosshair,
 } from '@phosphor-icons/react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 type DominationSessionItem = NonNullable<RouterOutputs['domination']['getAllSessions']>[number];
 type DominationState = NonNullable<RouterOutputs['domination']['getState']>;
@@ -26,7 +27,7 @@ const REFRESH_INTERVAL_MS = 5000;
 
 function RefreshIndicator({ isFetching }: { isFetching: boolean }) {
   return (
-    <div className="flex items-center gap-1.5 text-gray-400 text-xs font-mono">
+    <div className="flex items-center gap-1.5 text-theme-muted text-xs font-mono">
       <ArrowsClockwise
         size={12}
         className={isFetching ? 'animate-spin text-alert-red' : ''}
@@ -39,7 +40,7 @@ function RefreshIndicator({ isFetching }: { isFetching: boolean }) {
 function AnimatedScore({ value, isFetching }: { value: number; isFetching: boolean }) {
   return (
     <span
-      className={`text-3xl font-bold text-white tabular-nums font-mono transition-all duration-300 ${
+      className={`text-3xl font-bold text-theme-primary tabular-nums font-mono transition-all duration-300 ${
         isFetching ? 'blur-[2px] opacity-70' : 'blur-0 opacity-100'
       }`}
     >
@@ -58,7 +59,7 @@ function AnimatedBar({
   isFetching: boolean;
 }) {
   return (
-    <div className="h-2 bg-labs-terminal rounded-full overflow-hidden">
+    <div className="h-2 bg-theme-tertiary rounded-full overflow-hidden">
       <div
         className={`h-full rounded-full transition-all duration-500 ${
           isFetching ? 'opacity-60' : 'opacity-100'
@@ -115,7 +116,7 @@ function CountdownTimer({ endsAt }: { endsAt: Date }) {
           ? 'text-alert-red'
           : isUrgent
             ? 'text-alert-red animate-pulse'
-            : 'text-white text-glow-red'
+            : 'text-theme-primary text-glow-red'
       }`}
     >
       {timeLeft}
@@ -146,22 +147,25 @@ function LiveScoreboardContent() {
 
   if (!sessionId) {
     return (
-      <div className="min-h-screen bg-labs-black safe-area-inset">
+      <div className="min-h-screen bg-theme-primary safe-area-inset">
         <div className="px-4 py-6">
-          <div className="flex items-center gap-3 mb-6">
-            <Link
-              href="/"
-              className="w-10 h-10 flex items-center justify-center rounded-lg bg-labs-steel text-white active:bg-labs-terminal transition-colors"
-            >
-              <ArrowLeft size={20} />
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-white tracking-tight">SCOREBOARD</h1>
-              <p className="text-xs text-gray-500 uppercase tracking-widest">Live Feed</p>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <Link
+                href="/"
+                className="w-10 h-10 flex items-center justify-center rounded-lg bg-theme-tertiary text-theme-primary active:opacity-80 transition-colors"
+              >
+                <ArrowLeft size={20} />
+              </Link>
+              <div>
+                <h1 className="text-xl font-bold text-theme-primary tracking-tight">SCOREBOARD</h1>
+                <p className="text-xs text-theme-muted uppercase tracking-widest">Live Feed</p>
+              </div>
             </div>
+            <ThemeToggle />
           </div>
 
-          <p className="text-gray-400 text-sm mb-4 uppercase tracking-wider">
+          <p className="text-theme-muted text-sm mb-4 uppercase tracking-wider">
             Sélectionnez une opération :
           </p>
 
@@ -172,7 +176,8 @@ function LiveScoreboardContent() {
                 <Link
                   key={session.id}
                   href={`/live?session=${session.id}`}
-                  className="flex items-center justify-between glass rounded-xl p-4 active:bg-white/10 transition-all border-l-4 border-l-alert-red"
+                  className="flex items-center justify-between glass rounded-xl p-4 active:opacity-80 transition-all border-l-4"
+                  style={{ borderLeftColor: 'var(--accent-primary)' }}
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -183,24 +188,24 @@ function LiveScoreboardContent() {
                       }`}
                     />
                     <div>
-                      <h3 className="text-base font-semibold text-white">
+                      <h3 className="text-base font-semibold text-theme-primary">
                         {session.name}
                       </h3>
-                      <p className="text-xs text-gray-500 uppercase tracking-wider">
+                      <p className="text-xs text-theme-muted uppercase tracking-wider">
                         {session.status === 'ACTIVE' ? 'En cours' : 'En pause'}
                       </p>
                     </div>
                   </div>
-                  <CaretRight size={20} className="text-alert-red" />
+                  <CaretRight size={20} style={{ color: 'var(--accent-primary)' }} />
                 </Link>
               ))}
 
             {sessions?.filter(
               (s: DominationSessionItem) => s.status === 'ACTIVE' || s.status === 'PAUSED'
             ).length === 0 && (
-              <div className="glass rounded-xl p-8 text-center border border-labs-terminal">
-                <Crosshair size={48} className="text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-400 uppercase tracking-wider text-sm">Aucune opération active</p>
+              <div className="glass rounded-xl p-8 text-center border-theme-accent">
+                <Crosshair size={48} className="text-theme-muted mx-auto mb-3" />
+                <p className="text-theme-muted uppercase tracking-wider text-sm">Aucune opération active</p>
               </div>
             )}
           </div>
@@ -211,10 +216,10 @@ function LiveScoreboardContent() {
 
   if (!state) {
     return (
-      <div className="min-h-screen bg-labs-black flex items-center justify-center">
+      <div className="min-h-screen bg-theme-primary flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-alert-red mx-auto mb-3" />
-          <p className="text-gray-400 text-sm uppercase tracking-widest">Chargement...</p>
+          <p className="text-theme-muted text-sm uppercase tracking-widest">Chargement...</p>
         </div>
       </div>
     );
@@ -224,15 +229,15 @@ function LiveScoreboardContent() {
   const maxScore = Math.max(...sortedScores.map((s: DominationStateScore) => s.points), 1);
 
   return (
-    <div className="min-h-screen bg-labs-black safe-area-inset flex flex-col">
+    <div className="min-h-screen bg-theme-primary safe-area-inset flex flex-col">
       {/* Header TerraGroup Labs style */}
-      <header className="sticky top-0 z-10 bg-labs-dark/95 backdrop-blur-lg border-b border-labs-terminal">
+      <header className="sticky top-0 z-10 bg-theme-secondary/95 backdrop-blur-lg border-b border-theme-accent">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 min-w-0">
               <Link
                 href="/live"
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-labs-steel text-white active:bg-labs-terminal flex-shrink-0 transition-colors"
+                className="w-9 h-9 flex items-center justify-center rounded-lg bg-theme-tertiary text-theme-primary active:opacity-80 flex-shrink-0 transition-colors"
               >
                 <ArrowLeft size={18} />
               </Link>
@@ -247,11 +252,11 @@ function LiveScoreboardContent() {
                           : 'status-ended'
                     }`}
                   />
-                  <h1 className="text-base font-bold text-white truncate uppercase tracking-wide">
+                  <h1 className="text-base font-bold text-theme-primary truncate uppercase tracking-wide">
                     {state.session.name}
                   </h1>
                 </div>
-                <p className="text-xs text-gray-500 uppercase tracking-widest">
+                <p className="text-xs text-theme-muted uppercase tracking-widest">
                   {state.session.status === 'ACTIVE'
                     ? 'Opération en cours'
                     : state.session.status === 'PAUSED'
@@ -263,9 +268,10 @@ function LiveScoreboardContent() {
 
             <div className="flex items-center gap-2">
               {state.session.status === 'ACTIVE' && <RefreshIndicator isFetching={isFetching} />}
+              <ThemeToggle />
               <button
                 onClick={() => refetch()}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-labs-steel text-white active:bg-labs-terminal transition-colors"
+                className="w-9 h-9 flex items-center justify-center rounded-lg bg-theme-tertiary text-theme-primary active:opacity-80 transition-colors"
               >
                 <ArrowsClockwise size={18} className={isFetching ? 'animate-spin' : ''} />
               </button>
@@ -286,13 +292,13 @@ function LiveScoreboardContent() {
 
       {/* Tabs - TerraGroup style */}
       <div className="px-4 pt-4">
-        <div className="flex bg-labs-steel rounded-lg p-1">
+        <div className="flex bg-theme-tertiary rounded-lg p-1">
           <button
             onClick={() => setActiveTab('scores')}
             className={`flex-1 py-2.5 px-4 rounded-md text-sm font-semibold uppercase tracking-wider transition-all ${
               activeTab === 'scores'
-                ? 'bg-alert-red text-white shadow-glow-red'
-                : 'text-gray-400 hover:text-white'
+                ? 'bg-alert-red text-white glow-red'
+                : 'text-theme-muted hover:text-theme-primary'
             }`}
           >
             <Trophy size={16} className="inline mr-1.5 -mt-0.5" />
@@ -302,8 +308,8 @@ function LiveScoreboardContent() {
             onClick={() => setActiveTab('points')}
             className={`flex-1 py-2.5 px-4 rounded-md text-sm font-semibold uppercase tracking-wider transition-all ${
               activeTab === 'points'
-                ? 'bg-alert-red text-white shadow-glow-red'
-                : 'text-gray-400 hover:text-white'
+                ? 'bg-alert-red text-white glow-red'
+                : 'text-theme-muted hover:text-theme-primary'
             }`}
           >
             <MapPin size={16} className="inline mr-1.5 -mt-0.5" />
@@ -328,7 +334,7 @@ function LiveScoreboardContent() {
               return (
                 <div
                   key={score.teamId}
-                  className="glass rounded-xl p-4 transition-all hover:bg-white/[0.03]"
+                  className="glass rounded-xl p-4 transition-all hover:opacity-90"
                   style={{
                     borderLeft: `4px solid ${team.color}`,
                     boxShadow: index === 0 ? `0 0 20px ${team.color}20` : undefined,
@@ -344,16 +350,16 @@ function LiveScoreboardContent() {
                               ? 'bg-gray-400 text-black'
                               : index === 2
                                 ? 'bg-amber-700 text-white'
-                                : 'bg-labs-terminal text-gray-400'
+                                : 'bg-theme-tertiary text-theme-muted'
                         }`}
                       >
                         {index + 1}
                       </div>
                       <div>
-                        <span className="text-white font-semibold block">
+                        <span className="text-theme-primary font-semibold block">
                           {team.name}
                         </span>
-                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                        <div className="flex items-center gap-1.5 text-xs text-theme-muted">
                           <Flag size={10} weight="fill" style={{ color: team.color }} />
                           <span className="uppercase tracking-wider">{controlledCount} objectif{controlledCount !== 1 ? 's' : ''}</span>
                         </div>
@@ -367,10 +373,10 @@ function LiveScoreboardContent() {
             })}
 
             {sortedScores.length === 0 && (
-              <div className="glass rounded-xl p-8 text-center border border-labs-terminal">
-                <Trophy size={48} className="text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-400 uppercase tracking-wider">Aucun point enregistré</p>
-                <p className="text-gray-500 text-sm mt-1">
+              <div className="glass rounded-xl p-8 text-center border-theme-accent">
+                <Trophy size={48} className="text-theme-muted mx-auto mb-3" />
+                <p className="text-theme-muted uppercase tracking-wider">Aucun point enregistré</p>
+                <p className="text-theme-muted text-sm mt-1">
                   Les équipes doivent capturer des objectifs
                 </p>
               </div>
@@ -381,7 +387,7 @@ function LiveScoreboardContent() {
             {state.points.map((point: DominationStatePoint) => (
               <div
                 key={point.id}
-                className="glass rounded-xl p-4 transition-all hover:bg-white/[0.03]"
+                className="glass rounded-xl p-4 transition-all hover:opacity-90"
                 style={{
                   borderLeft: `4px solid ${point.controlledBy?.color || '#4b5563'}`,
                 }}
@@ -408,7 +414,7 @@ function LiveScoreboardContent() {
                       />
                     </div>
                     <div>
-                      <span className="text-white font-medium block">
+                      <span className="text-theme-primary font-medium block">
                         {point.name}
                       </span>
                       <div className="flex items-center gap-1.5 mt-0.5">
@@ -421,12 +427,12 @@ function LiveScoreboardContent() {
                                 boxShadow: `0 0 6px ${point.controlledBy.color}`,
                               }}
                             />
-                            <span className="text-sm text-gray-400">
+                            <span className="text-sm text-theme-muted">
                               {point.controlledBy.name}
                             </span>
                           </>
                         ) : (
-                          <span className="text-sm text-gray-500 uppercase tracking-wider">Non capturé</span>
+                          <span className="text-sm text-theme-muted uppercase tracking-wider">Non capturé</span>
                         )}
                       </div>
                     </div>
@@ -448,9 +454,9 @@ function LiveScoreboardContent() {
             ))}
 
             {state.points.length === 0 && (
-              <div className="glass rounded-xl p-8 text-center border border-labs-terminal">
-                <MapPin size={48} className="text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-400 uppercase tracking-wider">Aucun objectif configuré</p>
+              <div className="glass rounded-xl p-8 text-center border-theme-accent">
+                <MapPin size={48} className="text-theme-muted mx-auto mb-3" />
+                <p className="text-theme-muted uppercase tracking-wider">Aucun objectif configuré</p>
               </div>
             )}
           </div>
@@ -458,7 +464,7 @@ function LiveScoreboardContent() {
       </div>
 
       {/* Bottom Bar - TerraGroup style */}
-      <div className="sticky bottom-0 bg-labs-dark/95 backdrop-blur-lg border-t border-labs-terminal px-4 py-3">
+      <div className="sticky bottom-0 bg-theme-secondary/95 backdrop-blur-lg border-t border-theme-accent px-4 py-3">
         <div className="flex justify-around">
           {sortedScores.slice(0, 3).map((score: DominationStateScore, index: number) => {
             const team = state.teams.find((t: DominationStateTeam) => t.id === score.teamId);
@@ -475,10 +481,10 @@ function LiveScoreboardContent() {
                 >
                   {index + 1}
                 </div>
-                <p className="text-white text-sm font-medium truncate max-w-[80px]">
+                <p className="text-theme-primary text-sm font-medium truncate max-w-[80px]">
                   {team.name}
                 </p>
-                <p className={`text-gray-400 text-xs tabular-nums font-mono transition-all duration-300 ${
+                <p className={`text-theme-muted text-xs tabular-nums font-mono transition-all duration-300 ${
                   isFetching ? 'blur-[1px] opacity-70' : 'blur-0 opacity-100'
                 }`}>{score.points} pts</p>
               </div>
@@ -494,10 +500,10 @@ export default function LiveScoreboardPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-labs-black flex items-center justify-center">
+        <div className="min-h-screen bg-theme-primary flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-alert-red mx-auto mb-3" />
-            <p className="text-gray-500 text-xs uppercase tracking-widest">Initialisation...</p>
+            <p className="text-theme-muted text-xs uppercase tracking-widest">Initialisation...</p>
           </div>
         </div>
       }

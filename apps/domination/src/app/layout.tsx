@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { TRPCProvider } from '@/trpc/provider';
+import { ThemeProvider } from '@/components/ThemeProvider';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -18,7 +19,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
-  themeColor: '#020617',
+  themeColor: '#fafafa',
 };
 
 export default function RootLayout({
@@ -27,9 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
+    <html lang="fr" data-theme="light">
       <body className="overscroll-none">
-        <TRPCProvider>{children}</TRPCProvider>
+        <ThemeProvider>
+          <TRPCProvider>{children}</TRPCProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

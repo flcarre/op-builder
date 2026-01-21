@@ -24,6 +24,7 @@ import {
   Crosshair,
 } from '@phosphor-icons/react';
 import QRCode from 'qrcode';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 type DominationSession = NonNullable<RouterOutputs['domination']['getSession']>;
 type DominationTeam = DominationSession['teams'][number];
@@ -156,10 +157,10 @@ export default function SessionDetailPage({ params }: PageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-labs-black flex items-center justify-center safe-area-inset">
+      <div className="min-h-screen bg-theme-primary flex items-center justify-center safe-area-inset">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-alert-red mx-auto mb-3" />
-          <p className="text-gray-400 text-sm uppercase tracking-widest">Chargement...</p>
+          <p className="text-theme-muted text-sm uppercase tracking-widest">Chargement...</p>
         </div>
       </div>
     );
@@ -167,10 +168,10 @@ export default function SessionDetailPage({ params }: PageProps) {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-labs-black flex items-center justify-center safe-area-inset">
+      <div className="min-h-screen bg-theme-primary flex items-center justify-center safe-area-inset">
         <div className="text-center">
-          <Flag size={48} className="text-gray-600 mx-auto mb-3" />
-          <p className="text-gray-400 uppercase tracking-wide">Opération non trouvée</p>
+          <Flag size={48} className="text-theme-muted mx-auto mb-3" />
+          <p className="text-theme-muted uppercase tracking-wide">Opération non trouvée</p>
           <Link
             href="/admin"
             className="inline-flex items-center gap-2 text-alert-red mt-4 uppercase tracking-wider text-sm"
@@ -208,37 +209,38 @@ export default function SessionDetailPage({ params }: PageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-labs-black safe-area-inset flex flex-col">
+    <div className="min-h-screen bg-theme-primary safe-area-inset flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-labs-dark/90 backdrop-blur-lg border-b border-labs-terminal">
+      <header className="sticky top-0 z-10 bg-theme-secondary/90 backdrop-blur-lg border-b border-theme-accent">
         <div className="px-4 py-3">
           <div className="flex items-center gap-3">
             <Link
               href="/admin"
-              className="w-9 h-9 flex items-center justify-center rounded-lg bg-labs-steel text-white active:bg-labs-terminal"
+              className="w-9 h-9 flex items-center justify-center rounded-lg bg-theme-tertiary text-theme-primary active:opacity-80"
             >
               <ArrowLeft size={18} />
             </Link>
             <div className="min-w-0 flex-1">
-              <h1 className="text-base font-bold text-white truncate uppercase tracking-wide">
+              <h1 className="text-base font-bold text-theme-primary truncate uppercase tracking-wide">
                 {session.name}
               </h1>
               <div className="flex items-center gap-2 mt-0.5">
                 {getStatusBadge()}
               </div>
             </div>
+            <ThemeToggle />
           </div>
         </div>
 
         {/* Tabs */}
         <div className="px-4 pb-3">
-          <div className="flex bg-labs-steel rounded-lg p-1">
+          <div className="flex bg-theme-tertiary rounded-lg p-1">
             <button
               onClick={() => setActiveTab('teams')}
               className={`flex-1 py-2 px-3 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors ${
                 activeTab === 'teams'
                   ? 'bg-alert-red text-white'
-                  : 'text-gray-400'
+                  : 'text-theme-muted'
               }`}
             >
               <Users size={14} className="inline mr-1 -mt-0.5" />
@@ -249,7 +251,7 @@ export default function SessionDetailPage({ params }: PageProps) {
               className={`flex-1 py-2 px-3 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors ${
                 activeTab === 'points'
                   ? 'bg-alert-red text-white'
-                  : 'text-gray-400'
+                  : 'text-theme-muted'
               }`}
             >
               <Crosshair size={14} className="inline mr-1 -mt-0.5" />
@@ -260,7 +262,7 @@ export default function SessionDetailPage({ params }: PageProps) {
               className={`flex-1 py-2 px-3 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors ${
                 activeTab === 'config'
                   ? 'bg-alert-red text-white'
-                  : 'text-gray-400'
+                  : 'text-theme-muted'
               }`}
             >
               <Gear size={14} className="inline mr-1 -mt-0.5" />
@@ -272,7 +274,7 @@ export default function SessionDetailPage({ params }: PageProps) {
                 className={`flex-1 py-2 px-3 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors ${
                   activeTab === 'results'
                     ? 'bg-alert-red text-white'
-                    : 'text-gray-400'
+                    : 'text-theme-muted'
                 }`}
               >
                 <Trophy size={14} className="inline mr-1 -mt-0.5" />
@@ -290,7 +292,7 @@ export default function SessionDetailPage({ params }: PageProps) {
           <div>
             {session.status === 'DRAFT' && (
               <form onSubmit={handleCreateTeam} className="mb-4">
-                <div className="glass rounded-xl p-4 border border-labs-terminal">
+                <div className="glass rounded-xl p-4 border-theme-accent">
                   <input
                     type="text"
                     value={newTeamName}
@@ -307,7 +309,7 @@ export default function SessionDetailPage({ params }: PageProps) {
                           onClick={() => setNewTeamColor(color)}
                           className={`w-8 h-8 rounded-lg transition-all ${
                             newTeamColor === color
-                              ? 'ring-2 ring-white ring-offset-2 ring-offset-labs-black'
+                              ? 'ring-2 ring-theme-primary ring-offset-2 ring-offset-theme-primary'
                               : ''
                           }`}
                           style={{ backgroundColor: color }}
@@ -329,15 +331,15 @@ export default function SessionDetailPage({ params }: PageProps) {
 
             <div className="space-y-2">
               {session.teams.length === 0 && (
-                <div className="glass rounded-xl p-8 text-center border border-labs-terminal">
-                  <Users size={40} className="text-gray-600 mx-auto mb-2" />
-                  <p className="text-gray-400 text-sm uppercase tracking-wide">Aucune équipe</p>
+                <div className="glass rounded-xl p-8 text-center border-theme-accent">
+                  <Users size={40} className="text-theme-muted mx-auto mb-2" />
+                  <p className="text-theme-muted text-sm uppercase tracking-wide">Aucune équipe</p>
                 </div>
               )}
               {session.teams.map((team: DominationTeam) => (
                 <div
                   key={team.id}
-                  className="glass rounded-xl p-4 flex items-center justify-between border border-labs-terminal"
+                  className="glass rounded-xl p-4 flex items-center justify-between border-theme-accent"
                   style={{ borderLeft: `4px solid ${team.color}` }}
                 >
                   <div className="flex items-center gap-3">
@@ -345,7 +347,7 @@ export default function SessionDetailPage({ params }: PageProps) {
                       className="w-8 h-8 rounded-lg"
                       style={{ backgroundColor: team.color, boxShadow: `0 0 10px ${team.color}40` }}
                     />
-                    <span className="text-white font-semibold uppercase tracking-wide">{team.name}</span>
+                    <span className="text-theme-primary font-semibold uppercase tracking-wide">{team.name}</span>
                   </div>
                   {session.status === 'DRAFT' && (
                     <button
@@ -354,7 +356,7 @@ export default function SessionDetailPage({ params }: PageProps) {
                           deleteTeam.mutate({ id: team.id });
                         }
                       }}
-                      className="p-2 text-gray-400 active:text-alert-red"
+                      className="p-2 text-theme-muted active:text-alert-red"
                     >
                       <Trash size={18} />
                     </button>
@@ -370,7 +372,7 @@ export default function SessionDetailPage({ params }: PageProps) {
           <div>
             {session.status === 'DRAFT' && (
               <form onSubmit={handleCreatePoint} className="mb-4">
-                <div className="glass rounded-xl p-4 border border-labs-terminal">
+                <div className="glass rounded-xl p-4 border-theme-accent">
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -393,22 +395,22 @@ export default function SessionDetailPage({ params }: PageProps) {
 
             <div className="space-y-2">
               {session.points.length === 0 && (
-                <div className="glass rounded-xl p-8 text-center border border-labs-terminal">
-                  <Crosshair size={40} className="text-gray-600 mx-auto mb-2" />
-                  <p className="text-gray-400 text-sm uppercase tracking-wide">Aucun objectif</p>
+                <div className="glass rounded-xl p-8 text-center border-theme-accent">
+                  <Crosshair size={40} className="text-theme-muted mx-auto mb-2" />
+                  <p className="text-theme-muted text-sm uppercase tracking-wide">Aucun objectif</p>
                 </div>
               )}
               {session.points.map((point: DominationPoint) => (
                 <div
                   key={point.id}
-                  className="glass rounded-xl p-4 border border-labs-terminal"
+                  className="glass rounded-xl p-4 border-theme-accent"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-alert-red/20 rounded-lg flex items-center justify-center">
                         <Crosshair size={20} className="text-alert-red" />
                       </div>
-                      <span className="text-white font-semibold uppercase tracking-wide">{point.name}</span>
+                      <span className="text-theme-primary font-semibold uppercase tracking-wide">{point.name}</span>
                     </div>
                     {session.status === 'DRAFT' && (
                       <button
@@ -417,7 +419,7 @@ export default function SessionDetailPage({ params }: PageProps) {
                             deletePoint.mutate({ id: point.id });
                           }
                         }}
-                        className="p-2 text-gray-400 active:text-alert-red"
+                        className="p-2 text-theme-muted active:text-alert-red"
                       >
                         <Trash size={18} />
                       </button>
@@ -426,14 +428,14 @@ export default function SessionDetailPage({ params }: PageProps) {
                   <div className="flex gap-2">
                     <button
                       onClick={() => showQRCode(point.name, point.qrToken)}
-                      className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-labs-steel active:bg-labs-terminal rounded-lg text-sm text-gray-300 uppercase tracking-wider font-semibold"
+                      className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-theme-tertiary active:opacity-80 rounded-lg text-sm text-theme-secondary uppercase tracking-wider font-semibold"
                     >
                       <QrCode size={16} />
                       QR Code
                     </button>
                     <button
                       onClick={() => copyToClipboard(point.qrToken)}
-                      className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-labs-steel active:bg-labs-terminal rounded-lg text-sm text-gray-300 uppercase tracking-wider font-semibold"
+                      className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-theme-tertiary active:opacity-80 rounded-lg text-sm text-theme-secondary uppercase tracking-wider font-semibold"
                     >
                       {copiedToken === point.qrToken ? (
                         <>
@@ -456,11 +458,11 @@ export default function SessionDetailPage({ params }: PageProps) {
 
         {/* Config tab */}
         {activeTab === 'config' && (
-          <div className="glass rounded-xl p-4 border border-labs-terminal">
+          <div className="glass rounded-xl p-4 border-theme-accent">
             {isEditingConfig ? (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1.5 uppercase tracking-widest">
+                  <label className="block text-xs text-theme-muted mb-1.5 uppercase tracking-widest">
                     Nom de l&apos;opération
                   </label>
                   <input
@@ -471,7 +473,7 @@ export default function SessionDetailPage({ params }: PageProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1.5 uppercase tracking-widest">
+                  <label className="block text-xs text-theme-muted mb-1.5 uppercase tracking-widest">
                     Points par tick
                   </label>
                   <input
@@ -484,7 +486,7 @@ export default function SessionDetailPage({ params }: PageProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1.5 uppercase tracking-widest">
+                  <label className="block text-xs text-theme-muted mb-1.5 uppercase tracking-widest">
                     Intervalle (secondes)
                   </label>
                   <input
@@ -497,7 +499,7 @@ export default function SessionDetailPage({ params }: PageProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1.5 uppercase tracking-widest">
+                  <label className="block text-xs text-theme-muted mb-1.5 uppercase tracking-widest">
                     Durée (minutes)
                   </label>
                   <input
@@ -521,7 +523,7 @@ export default function SessionDetailPage({ params }: PageProps) {
                         setEditDuration(session.durationMinutes ?? '');
                       }
                     }}
-                    className="flex-1 bg-labs-steel active:bg-labs-terminal text-white py-3 rounded-xl font-semibold uppercase tracking-wider text-sm"
+                    className="flex-1 bg-theme-tertiary active:opacity-80 text-theme-primary py-3 rounded-xl font-semibold uppercase tracking-wider text-sm"
                   >
                     Annuler
                   </button>
@@ -538,32 +540,32 @@ export default function SessionDetailPage({ params }: PageProps) {
             ) : (
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-base font-semibold text-white uppercase tracking-wide">Configuration</h3>
+                  <h3 className="text-base font-semibold text-theme-primary uppercase tracking-wide">Configuration</h3>
                   {session.status === 'DRAFT' && (
                     <button
                       onClick={() => setIsEditingConfig(true)}
-                      className="p-2 bg-labs-steel active:bg-labs-terminal text-white rounded-lg"
+                      className="p-2 bg-theme-tertiary active:opacity-80 text-theme-primary rounded-lg"
                     >
                       <Pencil size={16} />
                     </button>
                   )}
                 </div>
                 <div className="space-y-3">
-                  <div className="flex justify-between py-2 border-b border-labs-terminal">
-                    <span className="text-gray-400 text-xs uppercase tracking-widest">Nom</span>
-                    <span className="text-white text-sm font-mono">{session.name}</span>
+                  <div className="flex justify-between py-2 border-b border-theme-accent">
+                    <span className="text-theme-muted text-xs uppercase tracking-widest">Nom</span>
+                    <span className="text-theme-primary text-sm font-mono">{session.name}</span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-labs-terminal">
-                    <span className="text-gray-400 text-xs uppercase tracking-widest">Points/tick</span>
-                    <span className="text-white text-sm font-mono">{session.pointsPerTick}</span>
+                  <div className="flex justify-between py-2 border-b border-theme-accent">
+                    <span className="text-theme-muted text-xs uppercase tracking-widest">Points/tick</span>
+                    <span className="text-theme-primary text-sm font-mono">{session.pointsPerTick}</span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-labs-terminal">
-                    <span className="text-gray-400 text-xs uppercase tracking-widest">Intervalle</span>
-                    <span className="text-white text-sm font-mono">{session.tickIntervalSec}s</span>
+                  <div className="flex justify-between py-2 border-b border-theme-accent">
+                    <span className="text-theme-muted text-xs uppercase tracking-widest">Intervalle</span>
+                    <span className="text-theme-primary text-sm font-mono">{session.tickIntervalSec}s</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-gray-400 text-xs uppercase tracking-widest">Durée</span>
-                    <span className="text-white text-sm font-mono">
+                    <span className="text-theme-muted text-xs uppercase tracking-widest">Durée</span>
+                    <span className="text-theme-primary text-sm font-mono">
                       {session.durationMinutes ? `${session.durationMinutes} min` : 'Illimitée'}
                     </span>
                   </div>
@@ -581,8 +583,8 @@ export default function SessionDetailPage({ params }: PageProps) {
                 <div className="flex items-center gap-3">
                   <Trophy size={24} className="text-alert-yellow" />
                   <div>
-                    <p className="text-white font-semibold uppercase tracking-wide">Opération terminée</p>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-theme-primary font-semibold uppercase tracking-wide">Opération terminée</p>
+                    <p className="text-theme-muted text-sm">
                       {session.endedAt && `Terminée le ${new Date(session.endedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}`}
                     </p>
                   </div>
@@ -591,10 +593,10 @@ export default function SessionDetailPage({ params }: PageProps) {
             )}
 
             {session.scores.length === 0 ? (
-              <div className="glass rounded-xl p-8 text-center border border-labs-terminal">
-                <Trophy size={40} className="text-gray-600 mx-auto mb-2" />
-                <p className="text-gray-400 text-sm uppercase tracking-wide">Aucun score enregistré</p>
-                <p className="text-gray-500 text-xs mt-1">
+              <div className="glass rounded-xl p-8 text-center border-theme-accent">
+                <Trophy size={40} className="text-theme-muted mx-auto mb-2" />
+                <p className="text-theme-muted text-sm uppercase tracking-wide">Aucun score enregistré</p>
+                <p className="text-theme-muted text-xs mt-1">
                   Les scores apparaîtront une fois l&apos;opération lancée
                 </p>
               </div>
@@ -613,7 +615,7 @@ export default function SessionDetailPage({ params }: PageProps) {
                     return (
                       <div
                         key={score.id}
-                        className={`glass rounded-xl p-4 transition-all border border-labs-terminal ${
+                        className={`glass rounded-xl p-4 transition-all border-theme-accent ${
                           isWinner ? 'ring-2 ring-alert-yellow/50' : ''
                         }`}
                         style={{ borderLeft: `4px solid ${team.color}` }}
@@ -636,20 +638,20 @@ export default function SessionDetailPage({ params }: PageProps) {
                               )}
                             </div>
                             <div>
-                              <p className="text-white font-semibold uppercase tracking-wide">{team.name}</p>
+                              <p className="text-theme-primary font-semibold uppercase tracking-wide">{team.name}</p>
                               {isWinner && (
                                 <p className="text-alert-yellow text-xs font-semibold uppercase tracking-wider">Vainqueur</p>
                               )}
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-2xl font-bold text-white font-mono">{score.points}</p>
-                            <p className="text-gray-500 text-xs uppercase tracking-widest">pts</p>
+                            <p className="text-2xl font-bold text-theme-primary font-mono">{score.points}</p>
+                            <p className="text-theme-muted text-xs uppercase tracking-widest">pts</p>
                           </div>
                         </div>
 
                         {/* Progress bar */}
-                        <div className="h-2 bg-labs-steel rounded-full overflow-hidden">
+                        <div className="h-2 bg-theme-tertiary rounded-full overflow-hidden">
                           <div
                             className="h-full rounded-full transition-all duration-500"
                             style={{
@@ -675,14 +677,14 @@ export default function SessionDetailPage({ params }: PageProps) {
           onClick={() => setQrModalPoint(null)}
         >
           <div
-            className="glass rounded-2xl w-full max-w-sm p-6 text-center border border-labs-terminal"
+            className="glass rounded-2xl w-full max-w-sm p-6 text-center border-theme-accent"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-white uppercase tracking-wide">{qrModalPoint.name}</h3>
+              <h3 className="text-lg font-bold text-theme-primary uppercase tracking-wide">{qrModalPoint.name}</h3>
               <button
                 onClick={() => setQrModalPoint(null)}
-                className="p-2 text-gray-400 active:text-white"
+                className="p-2 text-theme-muted active:text-theme-primary"
               >
                 <X size={20} />
               </button>
@@ -690,7 +692,7 @@ export default function SessionDetailPage({ params }: PageProps) {
             <div className="bg-white p-4 rounded-xl inline-block mb-4">
               <img src={qrDataUrl} alt="QR Code" className="w-56 h-56" />
             </div>
-            <p className="text-gray-400 text-sm mb-4">
+            <p className="text-theme-muted text-sm mb-4">
               Scannez ce QR code pour capturer l&apos;objectif
             </p>
             <button

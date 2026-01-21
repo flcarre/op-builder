@@ -13,6 +13,7 @@ import {
   ShieldCheck,
 } from '@phosphor-icons/react';
 import Link from 'next/link';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 type DominationSession = NonNullable<RouterOutputs['domination']['getSession']>;
 type DominationTeam = DominationSession['teams'][number];
@@ -64,10 +65,10 @@ export default function CapturePage({ params }: PageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-labs-black flex items-center justify-center safe-area-inset">
+      <div className="min-h-screen bg-theme-primary flex items-center justify-center safe-area-inset">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-alert-red mx-auto mb-4" />
-          <p className="text-gray-400 text-sm uppercase tracking-widest">Identification...</p>
+          <p className="text-theme-muted text-sm uppercase tracking-widest">Identification...</p>
         </div>
       </div>
     );
@@ -75,20 +76,20 @@ export default function CapturePage({ params }: PageProps) {
 
   if (error || !point) {
     return (
-      <div className="min-h-screen bg-labs-black flex items-center justify-center safe-area-inset p-4">
+      <div className="min-h-screen bg-theme-primary flex items-center justify-center safe-area-inset p-4">
         <div className="glass rounded-2xl p-8 text-center max-w-sm w-full border border-alert-red/30">
           <div className="w-16 h-16 rounded-xl bg-alert-red/20 mx-auto mb-4 flex items-center justify-center">
             <WarningCircle size={40} className="text-alert-red" />
           </div>
-          <h1 className="text-xl font-bold text-white mb-2 uppercase tracking-wide">
+          <h1 className="text-xl font-bold text-theme-primary mb-2 uppercase tracking-wide">
             Objectif non trouvé
           </h1>
-          <p className="text-gray-400 text-sm mb-6">
+          <p className="text-theme-muted text-sm mb-6">
             Ce QR code n&apos;est pas valide ou l&apos;objectif n&apos;existe plus.
           </p>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 bg-labs-steel active:bg-labs-terminal text-white px-5 py-3 rounded-xl transition-colors uppercase tracking-wider text-sm font-semibold"
+            className="inline-flex items-center gap-2 bg-theme-tertiary active:opacity-80 text-theme-primary px-5 py-3 rounded-xl transition-colors uppercase tracking-wider text-sm font-semibold"
           >
             <ArrowLeft size={18} />
             Retour
@@ -100,13 +101,13 @@ export default function CapturePage({ params }: PageProps) {
 
   if (session?.status !== 'ACTIVE') {
     return (
-      <div className="min-h-screen bg-labs-black flex items-center justify-center safe-area-inset p-4">
+      <div className="min-h-screen bg-theme-primary flex items-center justify-center safe-area-inset p-4">
         <div className="glass rounded-2xl p-8 text-center max-w-sm w-full border border-alert-yellow/30">
           <div className="w-16 h-16 rounded-xl bg-alert-yellow/20 mx-auto mb-4 flex items-center justify-center">
             <Flag size={40} className="text-alert-yellow" />
           </div>
-          <h1 className="text-xl font-bold text-white mb-2 uppercase tracking-wide">{point.name}</h1>
-          <p className="text-gray-400 text-sm mb-6">
+          <h1 className="text-xl font-bold text-theme-primary mb-2 uppercase tracking-wide">{point.name}</h1>
+          <p className="text-theme-muted text-sm mb-6">
             {session?.status === 'DRAFT'
               ? 'L\'opération n\'a pas encore commencé.'
               : session?.status === 'PAUSED'
@@ -128,7 +129,7 @@ export default function CapturePage({ params }: PageProps) {
   if (captureSuccess) {
     const capturedTeam = session?.teams.find((t: DominationTeam) => t.id === selectedTeamId);
     return (
-      <div className="min-h-screen bg-labs-black flex items-center justify-center safe-area-inset p-4">
+      <div className="min-h-screen bg-theme-primary flex items-center justify-center safe-area-inset p-4">
         <div className="glass rounded-2xl p-8 text-center max-w-sm w-full animate-capture border-2"
           style={{ borderColor: capturedTeam?.color || '#22c55e' }}
         >
@@ -141,10 +142,10 @@ export default function CapturePage({ params }: PageProps) {
           >
             <ShieldCheck size={48} weight="fill" className="text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-1 uppercase tracking-wide">
+          <h1 className="text-2xl font-bold text-theme-primary mb-1 uppercase tracking-wide">
             Objectif capturé
           </h1>
-          <p className="text-lg text-gray-300 mb-4">{point.name}</p>
+          <p className="text-lg text-theme-secondary mb-4">{point.name}</p>
           {capturedTeam && (
             <div
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg mb-6"
@@ -160,7 +161,7 @@ export default function CapturePage({ params }: PageProps) {
                   boxShadow: `0 0 8px ${capturedTeam.color}`,
                 }}
               />
-              <span className="text-white font-semibold">
+              <span className="text-theme-primary font-semibold">
                 {capturedTeam.name}
               </span>
             </div>
@@ -178,7 +179,7 @@ export default function CapturePage({ params }: PageProps) {
                 setCaptureSuccess(false);
                 setSelectedTeamId(null);
               }}
-              className="w-full bg-labs-steel active:bg-labs-terminal text-white px-5 py-4 rounded-xl transition-colors font-semibold uppercase tracking-wider text-sm"
+              className="w-full bg-theme-tertiary active:opacity-80 text-theme-primary px-5 py-4 rounded-xl transition-colors font-semibold uppercase tracking-wider text-sm"
             >
               Capturer à nouveau
             </button>
@@ -189,16 +190,19 @@ export default function CapturePage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-labs-black safe-area-inset flex flex-col">
+    <div className="min-h-screen bg-theme-primary safe-area-inset flex flex-col">
       {/* Header */}
-      <header className="px-4 pt-4 pb-2 bg-labs-dark/80 backdrop-blur-lg border-b border-labs-terminal">
-        <Link
-          href={`/live?session=${session?.id}`}
-          className="inline-flex items-center gap-2 text-gray-400 active:text-white text-sm uppercase tracking-wider"
-        >
-          <ArrowLeft size={16} />
-          Scoreboard
-        </Link>
+      <header className="px-4 pt-4 pb-2 bg-theme-secondary/80 backdrop-blur-lg border-b border-theme-accent">
+        <div className="flex items-center justify-between">
+          <Link
+            href={`/live?session=${session?.id}`}
+            className="inline-flex items-center gap-2 text-theme-muted active:text-theme-primary text-sm uppercase tracking-wider"
+          >
+            <ArrowLeft size={16} />
+            Scoreboard
+          </Link>
+          <ThemeToggle />
+        </div>
       </header>
 
       {/* Scrollable Content */}
@@ -222,9 +226,9 @@ export default function CapturePage({ params }: PageProps) {
               style={{ color: currentController?.color || '#dc2626' }}
             />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-1 uppercase tracking-wide">{point.name}</h1>
+          <h1 className="text-2xl font-bold text-theme-primary mb-1 uppercase tracking-wide">{point.name}</h1>
           {point.description && (
-            <p className="text-gray-400 text-sm">{point.description}</p>
+            <p className="text-theme-muted text-sm">{point.description}</p>
           )}
         </div>
 
@@ -234,7 +238,7 @@ export default function CapturePage({ params }: PageProps) {
             className="glass rounded-xl p-4 mb-6 text-center border-l-4"
             style={{ borderLeftColor: currentController.color }}
           >
-            <p className="text-xs text-gray-500 mb-2 uppercase tracking-widest">Contrôlé par</p>
+            <p className="text-xs text-theme-muted mb-2 uppercase tracking-widest">Contrôlé par</p>
             <div className="inline-flex items-center gap-2">
               <div
                 className="w-3 h-3 rounded-full"
@@ -243,7 +247,7 @@ export default function CapturePage({ params }: PageProps) {
                   boxShadow: `0 0 8px ${currentController.color}`,
                 }}
               />
-              <span className="text-white font-bold text-lg">
+              <span className="text-theme-primary font-bold text-lg">
                 {currentController.name}
               </span>
             </div>
@@ -252,7 +256,7 @@ export default function CapturePage({ params }: PageProps) {
 
         {/* Team selection */}
         <div>
-          <p className="text-sm text-gray-400 mb-4 text-center uppercase tracking-widest">
+          <p className="text-sm text-theme-muted mb-4 text-center uppercase tracking-widest">
             Sélectionnez votre équipe
           </p>
           <div className="grid grid-cols-2 gap-3">
@@ -267,7 +271,7 @@ export default function CapturePage({ params }: PageProps) {
                   disabled={isCurrentController}
                   className={`relative p-4 rounded-xl text-center transition-all ${
                     isSelected
-                      ? 'ring-2 ring-white ring-offset-2 ring-offset-labs-black scale-[1.02]'
+                      ? 'ring-2 ring-theme-primary ring-offset-2 ring-offset-theme-primary scale-[1.02]'
                       : isCurrentController
                         ? 'opacity-40 cursor-not-allowed'
                         : 'active:scale-[0.98]'
@@ -312,7 +316,7 @@ export default function CapturePage({ params }: PageProps) {
       </div>
 
       {/* Sticky Capture button */}
-      <div className="sticky bottom-0 px-4 py-4 bg-gradient-to-t from-labs-black via-labs-black/95 to-transparent">
+      <div className="sticky bottom-0 px-4 py-4 bg-gradient-to-t from-theme-primary via-theme-primary/95 to-transparent">
         <button
           onClick={handleCapture}
           disabled={!selectedTeamId || capturePoint.isPending}
