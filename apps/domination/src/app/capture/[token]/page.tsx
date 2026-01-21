@@ -169,7 +169,7 @@ export default function CapturePage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 safe-area-inset flex flex-col">
       {/* Header */}
-      <header className="px-4 py-4">
+      <header className="px-4 pt-4 pb-2">
         <Link
           href={`/live?session=${session?.id}`}
           className="inline-flex items-center gap-2 text-gray-400 active:text-white text-sm"
@@ -179,12 +179,12 @@ export default function CapturePage({ params }: PageProps) {
         </Link>
       </header>
 
-      {/* Content */}
-      <div className="flex-1 px-4 pb-4 flex flex-col">
+      {/* Scrollable Content */}
+      <div className="flex-1 px-4 overflow-auto">
         {/* Point info */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-4">
           <div
-            className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+            className="w-14 h-14 rounded-xl mx-auto mb-3 flex items-center justify-center"
             style={{
               backgroundColor: currentController?.color
                 ? `${currentController.color}30`
@@ -192,12 +192,12 @@ export default function CapturePage({ params }: PageProps) {
             }}
           >
             <Flag
-              size={32}
+              size={28}
               weight="fill"
               style={{ color: currentController?.color || '#a855f7' }}
             />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-1">{point.name}</h1>
+          <h1 className="text-xl font-bold text-white mb-1">{point.name}</h1>
           {point.description && (
             <p className="text-gray-400 text-sm">{point.description}</p>
           )}
@@ -205,14 +205,14 @@ export default function CapturePage({ params }: PageProps) {
 
         {/* Current controller */}
         {currentController && (
-          <div className="glass rounded-xl p-4 mb-6 text-center">
-            <p className="text-xs text-gray-500 mb-2">Actuellement contrôlé par</p>
+          <div className="glass rounded-xl p-3 mb-4 text-center">
+            <p className="text-xs text-gray-500 mb-1">Actuellement contrôlé par</p>
             <div className="inline-flex items-center gap-2">
               <div
-                className="w-4 h-4 rounded-full"
+                className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: currentController.color }}
               />
-              <span className="text-white font-semibold">
+              <span className="text-white font-semibold text-sm">
                 {currentController.name}
               </span>
             </div>
@@ -220,7 +220,7 @@ export default function CapturePage({ params }: PageProps) {
         )}
 
         {/* Team selection */}
-        <div className="flex-1">
+        <div>
           <p className="text-sm text-gray-400 mb-3 text-center">
             Sélectionnez votre équipe
           </p>
@@ -234,7 +234,7 @@ export default function CapturePage({ params }: PageProps) {
                   key={team.id}
                   onClick={() => !isCurrentController && setSelectedTeamId(team.id)}
                   disabled={isCurrentController}
-                  className={`relative p-5 rounded-xl text-center transition-all ${
+                  className={`relative p-4 rounded-xl text-center transition-all ${
                     isSelected
                       ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-900 scale-[1.02]'
                       : isCurrentController
@@ -243,7 +243,7 @@ export default function CapturePage({ params }: PageProps) {
                   }`}
                   style={{ backgroundColor: team.color }}
                 >
-                  <span className="text-white font-bold text-lg block">
+                  <span className="text-white font-bold text-base block">
                     {team.name}
                   </span>
                   {isCurrentController && (
@@ -268,24 +268,24 @@ export default function CapturePage({ params }: PageProps) {
             {captureError}
           </div>
         )}
+      </div>
 
-        {/* Capture button */}
-        <div className="mt-6 pb-2">
-          <button
-            onClick={handleCapture}
-            disabled={!selectedTeamId || capturePoint.isPending}
-            className="w-full bg-domination-500 active:bg-domination-600 disabled:opacity-50 disabled:active:bg-domination-500 text-white py-4 rounded-xl font-bold text-lg transition-colors"
-          >
-            {capturePoint.isPending ? (
-              <span className="flex items-center justify-center gap-2">
-                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white" />
-                Capture...
-              </span>
-            ) : (
-              'CAPTURER'
-            )}
-          </button>
-        </div>
+      {/* Sticky Capture button */}
+      <div className="sticky bottom-0 px-4 py-4 bg-gradient-to-t from-slate-950 via-slate-950/95 to-transparent">
+        <button
+          onClick={handleCapture}
+          disabled={!selectedTeamId || capturePoint.isPending}
+          className="w-full bg-domination-500 active:bg-domination-600 disabled:opacity-50 disabled:active:bg-domination-500 text-white py-4 rounded-xl font-bold text-lg transition-colors shadow-lg shadow-domination-500/20"
+        >
+          {capturePoint.isPending ? (
+            <span className="flex items-center justify-center gap-2">
+              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white" />
+              Capture...
+            </span>
+          ) : (
+            'CAPTURER'
+          )}
+        </button>
       </div>
     </div>
   );
