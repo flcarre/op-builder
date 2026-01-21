@@ -13,6 +13,7 @@ import {
   Timer,
   ArrowsClockwise,
   CaretRight,
+  Crosshair,
 } from '@phosphor-icons/react';
 
 type DominationSessionItem = NonNullable<RouterOutputs['domination']['getAllSessions']>[number];
@@ -25,12 +26,12 @@ const REFRESH_INTERVAL_MS = 5000;
 
 function RefreshIndicator({ isFetching }: { isFetching: boolean }) {
   return (
-    <div className="flex items-center gap-1.5 text-gray-400 text-xs">
+    <div className="flex items-center gap-1.5 text-gray-400 text-xs font-mono">
       <ArrowsClockwise
         size={12}
-        className={isFetching ? 'animate-spin text-domination-400' : ''}
+        className={isFetching ? 'animate-spin text-alert-red' : ''}
       />
-      <span>{isFetching ? 'Mise à jour...' : '5s'}</span>
+      <span className="uppercase tracking-wider">{isFetching ? 'Sync...' : '5s'}</span>
     </div>
   );
 }
@@ -38,7 +39,7 @@ function RefreshIndicator({ isFetching }: { isFetching: boolean }) {
 function AnimatedScore({ value, isFetching }: { value: number; isFetching: boolean }) {
   return (
     <span
-      className={`text-3xl font-bold text-white tabular-nums transition-all duration-300 ${
+      className={`text-3xl font-bold text-white tabular-nums font-mono transition-all duration-300 ${
         isFetching ? 'blur-[2px] opacity-70' : 'blur-0 opacity-100'
       }`}
     >
@@ -57,7 +58,7 @@ function AnimatedBar({
   isFetching: boolean;
 }) {
   return (
-    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+    <div className="h-2 bg-labs-terminal rounded-full overflow-hidden">
       <div
         className={`h-full rounded-full transition-all duration-500 ${
           isFetching ? 'opacity-60' : 'opacity-100'
@@ -65,6 +66,7 @@ function AnimatedBar({
         style={{
           width: `${percentage}%`,
           backgroundColor: color,
+          boxShadow: `0 0 10px ${color}60`,
         }}
       />
     </div>
@@ -74,6 +76,7 @@ function AnimatedBar({
 function CountdownTimer({ endsAt }: { endsAt: Date }) {
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [isExpired, setIsExpired] = useState(false);
+  const [isUrgent, setIsUrgent] = useState(false);
 
   useEffect(() => {
     const updateTimer = () => {
@@ -83,9 +86,11 @@ function CountdownTimer({ endsAt }: { endsAt: Date }) {
 
       if (diff <= 0) {
         setIsExpired(true);
-        setTimeLeft('Terminé');
+        setTimeLeft('00:00');
         return;
       }
+
+      setIsUrgent(diff < 60000);
 
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -104,7 +109,15 @@ function CountdownTimer({ endsAt }: { endsAt: Date }) {
   }, [endsAt]);
 
   return (
-    <span className={`font-mono text-2xl font-bold ${isExpired ? 'text-red-400' : 'text-white'}`}>
+    <span
+      className={`font-mono text-2xl font-bold tracking-wider ${
+        isExpired
+          ? 'text-alert-red'
+          : isUrgent
+            ? 'text-alert-red animate-pulse'
+            : 'text-white text-glow-red'
+      }`}
+    >
       {timeLeft}
     </span>
   );
@@ -133,20 +146,23 @@ function LiveScoreboardContent() {
 
   if (!sessionId) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 safe-area-inset">
+      <div className="min-h-screen bg-labs-black safe-area-inset">
         <div className="px-4 py-6">
           <div className="flex items-center gap-3 mb-6">
             <Link
               href="/"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-white active:bg-white/20"
+              className="w-10 h-10 flex items-center justify-center rounded-lg bg-labs-steel text-white active:bg-labs-terminal transition-colors"
             >
               <ArrowLeft size={20} />
             </Link>
-            <h1 className="text-xl font-bold text-white">Scoreboard Live</h1>
+            <div>
+              <h1 className="text-xl font-bold text-white tracking-tight">SCOREBOARD</h1>
+              <p className="text-xs text-gray-500 uppercase tracking-widest">Live Feed</p>
+            </div>
           </div>
 
-          <p className="text-gray-400 text-sm mb-4">
-            Sélectionnez une session :
+          <p className="text-gray-400 text-sm mb-4 uppercase tracking-wider">
+            Sélectionnez une opération :
           </p>
 
           <div className="space-y-3">
@@ -156,34 +172,35 @@ function LiveScoreboardContent() {
                 <Link
                   key={session.id}
                   href={`/live?session=${session.id}`}
-                  className="flex items-center justify-between glass p-4 rounded-xl active:bg-white/10 transition-all"
+                  className="flex items-center justify-between glass rounded-xl p-4 active:bg-white/10 transition-all border-l-4 border-l-alert-red"
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-3 h-3 rounded-full flex-shrink-0 ${
                         session.status === 'ACTIVE'
-                          ? 'bg-green-500 animate-pulse'
-                          : 'bg-yellow-500'
+                          ? 'status-active'
+                          : 'status-paused'
                       }`}
                     />
                     <div>
                       <h3 className="text-base font-semibold text-white">
                         {session.name}
                       </h3>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-gray-500 uppercase tracking-wider">
                         {session.status === 'ACTIVE' ? 'En cours' : 'En pause'}
                       </p>
                     </div>
                   </div>
-                  <CaretRight size={20} className="text-gray-500" />
+                  <CaretRight size={20} className="text-alert-red" />
                 </Link>
               ))}
 
             {sessions?.filter(
               (s: DominationSessionItem) => s.status === 'ACTIVE' || s.status === 'PAUSED'
             ).length === 0 && (
-              <div className="glass p-8 rounded-xl text-center text-gray-400">
-                Aucune session active
+              <div className="glass rounded-xl p-8 text-center border border-labs-terminal">
+                <Crosshair size={48} className="text-gray-600 mx-auto mb-3" />
+                <p className="text-gray-400 uppercase tracking-wider text-sm">Aucune opération active</p>
               </div>
             )}
           </div>
@@ -194,10 +211,10 @@ function LiveScoreboardContent() {
 
   if (!state) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-labs-black flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-domination-500 mx-auto mb-3" />
-          <p className="text-gray-400 text-sm">Chargement...</p>
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-alert-red mx-auto mb-3" />
+          <p className="text-gray-400 text-sm uppercase tracking-widest">Chargement...</p>
         </div>
       </div>
     );
@@ -207,15 +224,15 @@ function LiveScoreboardContent() {
   const maxScore = Math.max(...sortedScores.map((s: DominationStateScore) => s.points), 1);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 safe-area-inset flex flex-col">
-      {/* Header compact pour mobile */}
-      <header className="sticky top-0 z-10 bg-slate-950/90 backdrop-blur-lg border-b border-white/5">
+    <div className="min-h-screen bg-labs-black safe-area-inset flex flex-col">
+      {/* Header TerraGroup Labs style */}
+      <header className="sticky top-0 z-10 bg-labs-dark/95 backdrop-blur-lg border-b border-labs-terminal">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 min-w-0">
               <Link
                 href="/live"
-                className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 text-white active:bg-white/20 flex-shrink-0"
+                className="w-9 h-9 flex items-center justify-center rounded-lg bg-labs-steel text-white active:bg-labs-terminal flex-shrink-0 transition-colors"
               >
                 <ArrowLeft size={18} />
               </Link>
@@ -224,22 +241,22 @@ function LiveScoreboardContent() {
                   <div
                     className={`w-2 h-2 rounded-full flex-shrink-0 ${
                       state.session.status === 'ACTIVE'
-                        ? 'bg-green-500 animate-pulse'
+                        ? 'status-active'
                         : state.session.status === 'PAUSED'
-                          ? 'bg-yellow-500'
-                          : 'bg-gray-500'
+                          ? 'status-paused'
+                          : 'status-ended'
                     }`}
                   />
-                  <h1 className="text-base font-bold text-white truncate">
+                  <h1 className="text-base font-bold text-white truncate uppercase tracking-wide">
                     {state.session.name}
                   </h1>
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 uppercase tracking-widest">
                   {state.session.status === 'ACTIVE'
-                    ? 'En cours'
+                    ? 'Opération en cours'
                     : state.session.status === 'PAUSED'
-                      ? 'En pause'
-                      : 'Terminée'}
+                      ? 'Opération suspendue'
+                      : 'Opération terminée'}
                 </p>
               </div>
             </div>
@@ -248,34 +265,34 @@ function LiveScoreboardContent() {
               {state.session.status === 'ACTIVE' && <RefreshIndicator isFetching={isFetching} />}
               <button
                 onClick={() => refetch()}
-                className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 text-white active:bg-white/20"
+                className="w-9 h-9 flex items-center justify-center rounded-lg bg-labs-steel text-white active:bg-labs-terminal transition-colors"
               >
-                <ArrowsClockwise size={18} />
+                <ArrowsClockwise size={18} className={isFetching ? 'animate-spin' : ''} />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Timer en bannière si session active avec durée */}
+        {/* Timer Banner - Alert Red style */}
         {state.session.endsAt && state.session.status === 'ACTIVE' && (
           <div className="px-4 pb-3">
-            <div className="bg-domination-500/20 rounded-lg px-4 py-2 flex items-center justify-center gap-2">
-              <Timer size={18} className="text-domination-400" />
+            <div className="bg-alert-red/10 border border-alert-red/30 rounded-lg px-4 py-2 flex items-center justify-center gap-3">
+              <Timer size={20} className="text-alert-red" />
               <CountdownTimer endsAt={new Date(state.session.endsAt)} />
             </div>
           </div>
         )}
       </header>
 
-      {/* Tabs pour mobile */}
+      {/* Tabs - TerraGroup style */}
       <div className="px-4 pt-4">
-        <div className="flex bg-white/5 rounded-lg p-1">
+        <div className="flex bg-labs-steel rounded-lg p-1">
           <button
             onClick={() => setActiveTab('scores')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+            className={`flex-1 py-2.5 px-4 rounded-md text-sm font-semibold uppercase tracking-wider transition-all ${
               activeTab === 'scores'
-                ? 'bg-domination-500 text-white'
-                : 'text-gray-400'
+                ? 'bg-alert-red text-white shadow-glow-red'
+                : 'text-gray-400 hover:text-white'
             }`}
           >
             <Trophy size={16} className="inline mr-1.5 -mt-0.5" />
@@ -283,19 +300,19 @@ function LiveScoreboardContent() {
           </button>
           <button
             onClick={() => setActiveTab('points')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+            className={`flex-1 py-2.5 px-4 rounded-md text-sm font-semibold uppercase tracking-wider transition-all ${
               activeTab === 'points'
-                ? 'bg-domination-500 text-white'
-                : 'text-gray-400'
+                ? 'bg-alert-red text-white shadow-glow-red'
+                : 'text-gray-400 hover:text-white'
             }`}
           >
             <MapPin size={16} className="inline mr-1.5 -mt-0.5" />
-            Points
+            Objectifs
           </button>
         </div>
       </div>
 
-      {/* Contenu scrollable */}
+      {/* Content */}
       <div className="flex-1 px-4 py-4 overflow-auto">
         {activeTab === 'scores' ? (
           <div className="space-y-3">
@@ -311,33 +328,34 @@ function LiveScoreboardContent() {
               return (
                 <div
                   key={score.teamId}
-                  className="glass rounded-xl p-4 transition-all"
+                  className="glass rounded-xl p-4 transition-all hover:bg-white/[0.03]"
                   style={{
                     borderLeft: `4px solid ${team.color}`,
+                    boxShadow: index === 0 ? `0 0 20px ${team.color}20` : undefined,
                   }}
                 >
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <span
-                        className={`text-2xl font-bold w-8 ${
+                      <div
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold font-mono ${
                           index === 0
-                            ? 'text-yellow-500'
+                            ? 'bg-alert-yellow text-black'
                             : index === 1
-                              ? 'text-gray-400'
+                              ? 'bg-gray-400 text-black'
                               : index === 2
-                                ? 'text-amber-600'
-                                : 'text-gray-600'
+                                ? 'bg-amber-700 text-white'
+                                : 'bg-labs-terminal text-gray-400'
                         }`}
                       >
                         {index + 1}
-                      </span>
+                      </div>
                       <div>
-                        <span className="text-white font-semibold">
+                        <span className="text-white font-semibold block">
                           {team.name}
                         </span>
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <Flag size={10} />
-                          <span>{controlledCount} point{controlledCount !== 1 ? 's' : ''}</span>
+                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                          <Flag size={10} weight="fill" style={{ color: team.color }} />
+                          <span className="uppercase tracking-wider">{controlledCount} objectif{controlledCount !== 1 ? 's' : ''}</span>
                         </div>
                       </div>
                     </div>
@@ -349,11 +367,11 @@ function LiveScoreboardContent() {
             })}
 
             {sortedScores.length === 0 && (
-              <div className="glass rounded-xl p-8 text-center">
+              <div className="glass rounded-xl p-8 text-center border border-labs-terminal">
                 <Trophy size={48} className="text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-400">Aucun point marqué</p>
+                <p className="text-gray-400 uppercase tracking-wider">Aucun point enregistré</p>
                 <p className="text-gray-500 text-sm mt-1">
-                  Les équipes doivent capturer des points
+                  Les équipes doivent capturer des objectifs
                 </p>
               </div>
             )}
@@ -363,9 +381,9 @@ function LiveScoreboardContent() {
             {state.points.map((point: DominationStatePoint) => (
               <div
                 key={point.id}
-                className="glass rounded-xl p-4 transition-all"
+                className="glass rounded-xl p-4 transition-all hover:bg-white/[0.03]"
                 style={{
-                  borderLeft: `4px solid ${point.controlledBy?.color || '#6b7280'}`,
+                  borderLeft: `4px solid ${point.controlledBy?.color || '#4b5563'}`,
                 }}
               >
                 <div className="flex items-center justify-between">
@@ -375,7 +393,10 @@ function LiveScoreboardContent() {
                       style={{
                         backgroundColor: point.controlledBy?.color
                           ? `${point.controlledBy.color}20`
-                          : 'rgba(107, 114, 128, 0.2)'
+                          : 'rgba(75, 85, 99, 0.2)',
+                        boxShadow: point.controlledBy
+                          ? `0 0 15px ${point.controlledBy.color}30`
+                          : undefined,
                       }}
                     >
                       <Flag
@@ -387,7 +408,7 @@ function LiveScoreboardContent() {
                       />
                     </div>
                     <div>
-                      <span className="text-white font-medium">
+                      <span className="text-white font-medium block">
                         {point.name}
                       </span>
                       <div className="flex items-center gap-1.5 mt-0.5">
@@ -395,24 +416,28 @@ function LiveScoreboardContent() {
                           <>
                             <div
                               className="w-2 h-2 rounded-full"
-                              style={{ backgroundColor: point.controlledBy.color }}
+                              style={{
+                                backgroundColor: point.controlledBy.color,
+                                boxShadow: `0 0 6px ${point.controlledBy.color}`,
+                              }}
                             />
                             <span className="text-sm text-gray-400">
                               {point.controlledBy.name}
                             </span>
                           </>
                         ) : (
-                          <span className="text-sm text-gray-500">Non capturé</span>
+                          <span className="text-sm text-gray-500 uppercase tracking-wider">Non capturé</span>
                         )}
                       </div>
                     </div>
                   </div>
                   {point.controlledBy && (
                     <div
-                      className="px-2 py-1 rounded text-xs font-medium"
+                      className="px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider"
                       style={{
-                        backgroundColor: `${point.controlledBy.color}30`,
-                        color: point.controlledBy.color
+                        backgroundColor: `${point.controlledBy.color}20`,
+                        color: point.controlledBy.color,
+                        border: `1px solid ${point.controlledBy.color}40`,
                       }}
                     >
                       Contrôlé
@@ -423,17 +448,17 @@ function LiveScoreboardContent() {
             ))}
 
             {state.points.length === 0 && (
-              <div className="glass rounded-xl p-8 text-center">
+              <div className="glass rounded-xl p-8 text-center border border-labs-terminal">
                 <MapPin size={48} className="text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-400">Aucun point configuré</p>
+                <p className="text-gray-400 uppercase tracking-wider">Aucun objectif configuré</p>
               </div>
             )}
           </div>
         )}
       </div>
 
-      {/* Résumé sticky en bas sur mobile */}
-      <div className="sticky bottom-0 bg-slate-950/90 backdrop-blur-lg border-t border-white/5 px-4 py-3">
+      {/* Bottom Bar - TerraGroup style */}
+      <div className="sticky bottom-0 bg-labs-dark/95 backdrop-blur-lg border-t border-labs-terminal px-4 py-3">
         <div className="flex justify-around">
           {sortedScores.slice(0, 3).map((score: DominationStateScore, index: number) => {
             const team = state.teams.find((t: DominationStateTeam) => t.id === score.teamId);
@@ -442,15 +467,18 @@ function LiveScoreboardContent() {
             return (
               <div key={score.teamId} className="text-center">
                 <div
-                  className="w-8 h-8 rounded-full mx-auto mb-1 flex items-center justify-center text-white font-bold text-sm"
-                  style={{ backgroundColor: team.color }}
+                  className="w-9 h-9 rounded-lg mx-auto mb-1 flex items-center justify-center text-white font-bold text-sm font-mono"
+                  style={{
+                    backgroundColor: team.color,
+                    boxShadow: index === 0 ? `0 0 12px ${team.color}60` : undefined,
+                  }}
                 >
                   {index + 1}
                 </div>
                 <p className="text-white text-sm font-medium truncate max-w-[80px]">
                   {team.name}
                 </p>
-                <p className={`text-gray-400 text-xs tabular-nums transition-all duration-300 ${
+                <p className={`text-gray-400 text-xs tabular-nums font-mono transition-all duration-300 ${
                   isFetching ? 'blur-[1px] opacity-70' : 'blur-0 opacity-100'
                 }`}>{score.points} pts</p>
               </div>
@@ -466,8 +494,11 @@ export default function LiveScoreboardPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-domination-500" />
+        <div className="min-h-screen bg-labs-black flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-alert-red mx-auto mb-3" />
+            <p className="text-gray-500 text-xs uppercase tracking-widest">Initialisation...</p>
+          </div>
         </div>
       }
     >

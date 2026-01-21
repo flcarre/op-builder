@@ -9,6 +9,8 @@ import {
   WarningCircle,
   Trophy,
   ArrowLeft,
+  Crosshair,
+  ShieldCheck,
 } from '@phosphor-icons/react';
 import Link from 'next/link';
 
@@ -62,10 +64,10 @@ export default function CapturePage({ params }: PageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center safe-area-inset">
+      <div className="min-h-screen bg-labs-black flex items-center justify-center safe-area-inset">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-domination-500 mx-auto mb-3" />
-          <p className="text-gray-400 text-sm">Chargement...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-alert-red mx-auto mb-4" />
+          <p className="text-gray-400 text-sm uppercase tracking-widest">Identification...</p>
         </div>
       </div>
     );
@@ -73,18 +75,20 @@ export default function CapturePage({ params }: PageProps) {
 
   if (error || !point) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center safe-area-inset p-4">
-        <div className="glass p-8 rounded-2xl text-center max-w-sm w-full">
-          <WarningCircle size={56} className="text-red-500 mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-white mb-2">
-            Point non trouvé
+      <div className="min-h-screen bg-labs-black flex items-center justify-center safe-area-inset p-4">
+        <div className="glass rounded-2xl p-8 text-center max-w-sm w-full border border-alert-red/30">
+          <div className="w-16 h-16 rounded-xl bg-alert-red/20 mx-auto mb-4 flex items-center justify-center">
+            <WarningCircle size={40} className="text-alert-red" />
+          </div>
+          <h1 className="text-xl font-bold text-white mb-2 uppercase tracking-wide">
+            Objectif non trouvé
           </h1>
           <p className="text-gray-400 text-sm mb-6">
-            Ce QR code n&apos;est pas valide ou le point n&apos;existe plus.
+            Ce QR code n&apos;est pas valide ou l&apos;objectif n&apos;existe plus.
           </p>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 bg-white/10 active:bg-white/20 text-white px-5 py-3 rounded-xl transition-colors"
+            className="inline-flex items-center gap-2 bg-labs-steel active:bg-labs-terminal text-white px-5 py-3 rounded-xl transition-colors uppercase tracking-wider text-sm font-semibold"
           >
             <ArrowLeft size={18} />
             Retour
@@ -96,20 +100,22 @@ export default function CapturePage({ params }: PageProps) {
 
   if (session?.status !== 'ACTIVE') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center safe-area-inset p-4">
-        <div className="glass p-8 rounded-2xl text-center max-w-sm w-full">
-          <Flag size={56} className="text-yellow-500 mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-white mb-2">{point.name}</h1>
+      <div className="min-h-screen bg-labs-black flex items-center justify-center safe-area-inset p-4">
+        <div className="glass rounded-2xl p-8 text-center max-w-sm w-full border border-alert-yellow/30">
+          <div className="w-16 h-16 rounded-xl bg-alert-yellow/20 mx-auto mb-4 flex items-center justify-center">
+            <Flag size={40} className="text-alert-yellow" />
+          </div>
+          <h1 className="text-xl font-bold text-white mb-2 uppercase tracking-wide">{point.name}</h1>
           <p className="text-gray-400 text-sm mb-6">
             {session?.status === 'DRAFT'
-              ? 'La session n\'a pas encore commencé.'
+              ? 'L\'opération n\'a pas encore commencé.'
               : session?.status === 'PAUSED'
-                ? 'La session est en pause.'
-                : 'La session est terminée.'}
+                ? 'L\'opération est suspendue.'
+                : 'L\'opération est terminée.'}
           </p>
           <Link
             href={`/live?session=${session?.id}`}
-            className="inline-flex items-center justify-center gap-2 bg-domination-500 active:bg-domination-600 text-white px-5 py-3 rounded-xl transition-colors w-full"
+            className="inline-flex items-center justify-center gap-2 btn-primary text-white px-5 py-3 rounded-xl w-full"
           >
             <Trophy size={18} />
             Voir le scoreboard
@@ -122,25 +128,39 @@ export default function CapturePage({ params }: PageProps) {
   if (captureSuccess) {
     const capturedTeam = session?.teams.find((t: DominationTeam) => t.id === selectedTeamId);
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center safe-area-inset p-4">
-        <div className="glass p-8 rounded-2xl text-center max-w-sm w-full animate-capture">
+      <div className="min-h-screen bg-labs-black flex items-center justify-center safe-area-inset p-4">
+        <div className="glass rounded-2xl p-8 text-center max-w-sm w-full animate-capture border-2"
+          style={{ borderColor: capturedTeam?.color || '#22c55e' }}
+        >
           <div
-            className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center"
-            style={{ backgroundColor: capturedTeam?.color || '#22c55e' }}
+            className="w-20 h-20 rounded-xl mx-auto mb-4 flex items-center justify-center"
+            style={{
+              backgroundColor: capturedTeam?.color || '#22c55e',
+              boxShadow: `0 0 30px ${capturedTeam?.color || '#22c55e'}60`,
+            }}
           >
-            <CheckCircle size={48} weight="fill" className="text-white" />
+            <ShieldCheck size={48} weight="fill" className="text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-1">
-            Point capturé !
+          <h1 className="text-2xl font-bold text-white mb-1 uppercase tracking-wide">
+            Objectif capturé
           </h1>
-          <p className="text-lg text-gray-300 mb-3">{point.name}</p>
+          <p className="text-lg text-gray-300 mb-4">{point.name}</p>
           {capturedTeam && (
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 mb-6">
+            <div
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg mb-6"
+              style={{
+                backgroundColor: `${capturedTeam.color}20`,
+                border: `1px solid ${capturedTeam.color}40`,
+              }}
+            >
               <div
                 className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: capturedTeam.color }}
+                style={{
+                  backgroundColor: capturedTeam.color,
+                  boxShadow: `0 0 8px ${capturedTeam.color}`,
+                }}
               />
-              <span className="text-white font-medium">
+              <span className="text-white font-semibold">
                 {capturedTeam.name}
               </span>
             </div>
@@ -148,7 +168,7 @@ export default function CapturePage({ params }: PageProps) {
           <div className="space-y-3">
             <Link
               href={`/live?session=${session?.id}`}
-              className="flex items-center justify-center gap-2 bg-domination-500 active:bg-domination-600 text-white px-5 py-4 rounded-xl transition-colors w-full font-medium"
+              className="flex items-center justify-center gap-2 btn-primary text-white px-5 py-4 rounded-xl w-full"
             >
               <Trophy size={20} />
               Voir le scoreboard
@@ -158,7 +178,7 @@ export default function CapturePage({ params }: PageProps) {
                 setCaptureSuccess(false);
                 setSelectedTeamId(null);
               }}
-              className="w-full bg-white/10 active:bg-white/20 text-white px-5 py-4 rounded-xl transition-colors font-medium"
+              className="w-full bg-labs-steel active:bg-labs-terminal text-white px-5 py-4 rounded-xl transition-colors font-semibold uppercase tracking-wider text-sm"
             >
               Capturer à nouveau
             </button>
@@ -169,12 +189,12 @@ export default function CapturePage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 safe-area-inset flex flex-col">
+    <div className="min-h-screen bg-labs-black safe-area-inset flex flex-col">
       {/* Header */}
-      <header className="px-4 pt-4 pb-2">
+      <header className="px-4 pt-4 pb-2 bg-labs-dark/80 backdrop-blur-lg border-b border-labs-terminal">
         <Link
           href={`/live?session=${session?.id}`}
-          className="inline-flex items-center gap-2 text-gray-400 active:text-white text-sm"
+          className="inline-flex items-center gap-2 text-gray-400 active:text-white text-sm uppercase tracking-wider"
         >
           <ArrowLeft size={16} />
           Scoreboard
@@ -182,24 +202,27 @@ export default function CapturePage({ params }: PageProps) {
       </header>
 
       {/* Scrollable Content */}
-      <div className="flex-1 px-4 overflow-auto">
+      <div className="flex-1 px-4 py-6 overflow-auto">
         {/* Point info */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-6">
           <div
-            className="w-14 h-14 rounded-xl mx-auto mb-3 flex items-center justify-center"
+            className="w-16 h-16 rounded-xl mx-auto mb-4 flex items-center justify-center"
             style={{
               backgroundColor: currentController?.color
-                ? `${currentController.color}30`
-                : 'rgba(168, 85, 247, 0.2)'
+                ? `${currentController.color}20`
+                : 'rgba(220, 38, 38, 0.2)',
+              boxShadow: currentController?.color
+                ? `0 0 20px ${currentController.color}30`
+                : '0 0 20px rgba(220, 38, 38, 0.2)',
             }}
           >
-            <Flag
-              size={28}
-              weight="fill"
-              style={{ color: currentController?.color || '#a855f7' }}
+            <Crosshair
+              size={32}
+              weight="bold"
+              style={{ color: currentController?.color || '#dc2626' }}
             />
           </div>
-          <h1 className="text-xl font-bold text-white mb-1">{point.name}</h1>
+          <h1 className="text-2xl font-bold text-white mb-1 uppercase tracking-wide">{point.name}</h1>
           {point.description && (
             <p className="text-gray-400 text-sm">{point.description}</p>
           )}
@@ -207,14 +230,20 @@ export default function CapturePage({ params }: PageProps) {
 
         {/* Current controller */}
         {currentController && (
-          <div className="glass rounded-xl p-3 mb-4 text-center">
-            <p className="text-xs text-gray-500 mb-1">Actuellement contrôlé par</p>
+          <div
+            className="glass rounded-xl p-4 mb-6 text-center border-l-4"
+            style={{ borderLeftColor: currentController.color }}
+          >
+            <p className="text-xs text-gray-500 mb-2 uppercase tracking-widest">Contrôlé par</p>
             <div className="inline-flex items-center gap-2">
               <div
                 className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: currentController.color }}
+                style={{
+                  backgroundColor: currentController.color,
+                  boxShadow: `0 0 8px ${currentController.color}`,
+                }}
               />
-              <span className="text-white font-semibold text-sm">
+              <span className="text-white font-bold text-lg">
                 {currentController.name}
               </span>
             </div>
@@ -223,7 +252,7 @@ export default function CapturePage({ params }: PageProps) {
 
         {/* Team selection */}
         <div>
-          <p className="text-sm text-gray-400 mb-3 text-center">
+          <p className="text-sm text-gray-400 mb-4 text-center uppercase tracking-widest">
             Sélectionnez votre équipe
           </p>
           <div className="grid grid-cols-2 gap-3">
@@ -238,24 +267,33 @@ export default function CapturePage({ params }: PageProps) {
                   disabled={isCurrentController}
                   className={`relative p-4 rounded-xl text-center transition-all ${
                     isSelected
-                      ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-900 scale-[1.02]'
+                      ? 'ring-2 ring-white ring-offset-2 ring-offset-labs-black scale-[1.02]'
                       : isCurrentController
-                        ? 'opacity-40'
+                        ? 'opacity-40 cursor-not-allowed'
                         : 'active:scale-[0.98]'
                   }`}
-                  style={{ backgroundColor: team.color }}
+                  style={{
+                    backgroundColor: team.color,
+                    boxShadow: isSelected ? `0 0 20px ${team.color}60` : undefined,
+                  }}
                 >
-                  <span className="text-white font-bold text-base block">
+                  <span className="text-white font-bold text-base block uppercase tracking-wide">
                     {team.name}
                   </span>
                   {isCurrentController && (
-                    <span className="text-white/80 text-xs mt-1 block">
-                      Contrôle déjà
+                    <span className="text-white/70 text-xs mt-1 block uppercase tracking-wider">
+                      Contrôle actif
                     </span>
                   )}
                   {isSelected && (
-                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                      <CheckCircle size={16} weight="fill" className="text-green-500" />
+                    <div
+                      className="absolute -top-2 -right-2 w-7 h-7 rounded-lg flex items-center justify-center"
+                      style={{
+                        backgroundColor: team.color,
+                        boxShadow: `0 0 10px ${team.color}`,
+                      }}
+                    >
+                      <CheckCircle size={18} weight="fill" className="text-white" />
                     </div>
                   )}
                 </button>
@@ -266,26 +304,30 @@ export default function CapturePage({ params }: PageProps) {
 
         {/* Error message */}
         {captureError && (
-          <div className="mt-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-400 text-sm text-center">
+          <div className="mt-4 p-4 bg-alert-red/10 border border-alert-red/30 rounded-xl text-alert-red text-sm text-center">
+            <WarningCircle size={20} className="inline mr-2 -mt-0.5" />
             {captureError}
           </div>
         )}
       </div>
 
       {/* Sticky Capture button */}
-      <div className="sticky bottom-0 px-4 py-4 bg-gradient-to-t from-slate-950 via-slate-950/95 to-transparent">
+      <div className="sticky bottom-0 px-4 py-4 bg-gradient-to-t from-labs-black via-labs-black/95 to-transparent">
         <button
           onClick={handleCapture}
           disabled={!selectedTeamId || capturePoint.isPending}
-          className="w-full bg-domination-500 active:bg-domination-600 disabled:opacity-50 disabled:active:bg-domination-500 text-white py-4 rounded-xl font-bold text-lg transition-colors shadow-lg shadow-domination-500/20"
+          className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-xl font-bold text-lg uppercase tracking-widest"
         >
           {capturePoint.isPending ? (
-            <span className="flex items-center justify-center gap-2">
+            <span className="flex items-center justify-center gap-3">
               <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white" />
-              Capture...
+              Capture en cours...
             </span>
           ) : (
-            'CAPTURER'
+            <span className="flex items-center justify-center gap-2">
+              <Crosshair size={22} weight="bold" />
+              Capturer
+            </span>
           )}
         </button>
       </div>

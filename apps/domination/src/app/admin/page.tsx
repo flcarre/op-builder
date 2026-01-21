@@ -14,6 +14,7 @@ import {
   Timer,
   ArrowLeft,
   PlayCircle,
+  ShieldCheck,
 } from '@phosphor-icons/react';
 import { useState } from 'react';
 
@@ -80,13 +81,13 @@ export default function AdminPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'ACTIVE':
-        return 'bg-green-500';
+        return 'status-active';
       case 'PAUSED':
-        return 'bg-yellow-500';
+        return 'status-paused';
       case 'COMPLETED':
-        return 'bg-gray-500';
+        return 'status-ended';
       default:
-        return 'bg-blue-500';
+        return 'bg-tactical-blue';
     }
   };
 
@@ -106,25 +107,25 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 safe-area-inset">
+    <div className="min-h-screen bg-labs-black safe-area-inset">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-slate-950/90 backdrop-blur-lg border-b border-white/5">
+      <header className="sticky top-0 z-10 bg-labs-dark/90 backdrop-blur-lg border-b border-labs-terminal">
         <div className="px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 text-white active:bg-white/20"
+              className="w-9 h-9 flex items-center justify-center rounded-lg bg-labs-steel text-white active:bg-labs-terminal"
             >
               <ArrowLeft size={18} />
             </Link>
-            <h1 className="text-lg font-bold text-white flex items-center gap-2">
-              <Flag size={20} weight="fill" className="text-domination-500" />
-              Administration
+            <h1 className="text-lg font-bold text-white flex items-center gap-2 uppercase tracking-wider">
+              <ShieldCheck size={20} weight="fill" className="text-alert-red" />
+              Centre de Commande
             </h1>
           </div>
           <button
             onClick={() => setShowCreateForm(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-domination-500 text-white active:bg-domination-600"
+            className="w-9 h-9 flex items-center justify-center rounded-lg btn-primary"
           >
             <Plus size={20} weight="bold" />
           </button>
@@ -134,30 +135,30 @@ export default function AdminPage() {
       <div className="px-4 py-4">
         {/* Create form modal */}
         {showCreateForm && (
-          <div className="fixed inset-0 bg-black/80 z-50 flex items-end sm:items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/90 z-50 flex items-end sm:items-center justify-center p-4">
             <div
-              className="glass rounded-t-2xl sm:rounded-2xl w-full max-w-md p-5"
+              className="glass rounded-t-2xl sm:rounded-2xl w-full max-w-md p-5 border border-labs-terminal"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-lg font-semibold text-white mb-4">
-                Nouvelle session
+              <h2 className="text-lg font-semibold text-white mb-4 uppercase tracking-wide">
+                Nouvelle Opération
               </h2>
               <form onSubmit={handleCreateSession} className="space-y-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1.5">
-                    Nom de la session
+                  <label className="block text-xs text-gray-400 mb-1.5 uppercase tracking-widest">
+                    Nom de l&apos;opération
                   </label>
                   <input
                     type="text"
                     value={newSessionName}
                     onChange={(e) => setNewSessionName(e.target.value)}
-                    placeholder="Ex: Partie du samedi"
+                    placeholder="Ex: Op. Tempête Rouge"
                     autoFocus
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-domination-500"
+                    className="input-labs w-full px-4 py-3"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1.5">
+                  <label className="block text-xs text-gray-400 mb-1.5 uppercase tracking-widest">
                     Durée (optionnel)
                   </label>
                   <div className="flex items-center gap-2">
@@ -168,9 +169,9 @@ export default function AdminPage() {
                       placeholder="30"
                       min={1}
                       max={480}
-                      className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-domination-500"
+                      className="input-labs flex-1 px-4 py-3"
                     />
-                    <span className="text-gray-400">minutes</span>
+                    <span className="text-gray-400 text-sm uppercase">min</span>
                   </div>
                   <p className="text-gray-500 text-xs mt-1.5">
                     Laissez vide pour une durée illimitée
@@ -180,16 +181,16 @@ export default function AdminPage() {
                   <button
                     type="button"
                     onClick={() => setShowCreateForm(false)}
-                    className="flex-1 bg-white/10 active:bg-white/20 text-white py-3 rounded-xl font-medium"
+                    className="flex-1 bg-labs-steel active:bg-labs-terminal text-white py-3 rounded-xl font-semibold uppercase tracking-wider text-sm"
                   >
                     Annuler
                   </button>
                   <button
                     type="submit"
                     disabled={!newSessionName.trim() || createSession.isPending}
-                    className="flex-1 bg-domination-500 active:bg-domination-600 disabled:opacity-50 text-white py-3 rounded-xl font-medium"
+                    className="flex-1 btn-primary disabled:opacity-50 text-white py-3 rounded-xl font-semibold uppercase tracking-wider text-sm"
                   >
-                    Créer
+                    Déployer
                   </button>
                 </div>
               </form>
@@ -199,28 +200,28 @@ export default function AdminPage() {
 
         {/* Sessions list */}
         {isLoading && (
-          <div className="glass p-8 rounded-xl text-center text-gray-400">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-domination-500 mx-auto mb-3" />
-            Chargement...
+          <div className="glass p-8 rounded-xl text-center text-gray-400 border border-labs-terminal">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-alert-red mx-auto mb-3" />
+            <p className="text-sm uppercase tracking-widest">Chargement...</p>
           </div>
         )}
 
         {sessions?.length === 0 && !isLoading && (
-          <div className="glass p-8 rounded-xl text-center">
+          <div className="glass p-8 rounded-xl text-center border border-labs-terminal">
             <Flag size={48} className="text-gray-600 mx-auto mb-3" />
-            <p className="text-gray-400 mb-1">Aucune session</p>
+            <p className="text-gray-400 mb-1 uppercase tracking-wide">Aucune opération</p>
             <p className="text-gray-500 text-sm">
-              Créez votre première session pour commencer
+              Déployez votre première opération pour commencer
             </p>
           </div>
         )}
 
         <div className="space-y-3">
           {sessions?.map((session: DominationSessionItem) => (
-            <div key={session.id} className="glass rounded-xl overflow-hidden">
+            <div key={session.id} className="glass rounded-xl overflow-hidden border border-labs-terminal">
               <Link
                 href={`/admin/sessions/${session.id}`}
-                className="flex items-center justify-between p-4 active:bg-white/5"
+                className="flex items-center justify-between p-4 active:bg-labs-steel"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div
@@ -229,13 +230,13 @@ export default function AdminPage() {
                     }`}
                   />
                   <div className="min-w-0">
-                    <h3 className="text-base font-semibold text-white truncate">
+                    <h3 className="text-base font-semibold text-white truncate uppercase tracking-wide">
                       {session.name}
                     </h3>
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <div className="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wider">
                       <span>{getStatusLabel(session.status)}</span>
                       <span>•</span>
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1 font-mono">
                         <Timer size={12} />
                         {formatDuration(session.durationMinutes)}
                       </span>
@@ -246,26 +247,26 @@ export default function AdminPage() {
               </Link>
 
               {/* Action buttons */}
-              <div className="flex border-t border-white/5">
+              <div className="flex border-t border-labs-terminal">
                 {session.status === 'DRAFT' && (
                   <>
                     <button
                       onClick={() => startSession.mutate({ id: session.id })}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 text-green-400 active:bg-green-500/10 border-r border-white/5"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 text-tactical-green active:bg-tactical-green/10 border-r border-labs-terminal uppercase text-xs tracking-wider font-semibold"
                     >
                       <PlayCircle size={18} weight="fill" />
-                      <span className="text-sm">Démarrer</span>
+                      <span>Lancer</span>
                     </button>
                     <button
                       onClick={() => {
-                        if (confirm('Supprimer cette session ?')) {
+                        if (confirm('Supprimer cette opération ?')) {
                           deleteSession.mutate({ id: session.id });
                         }
                       }}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 text-red-400 active:bg-red-500/10"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 text-alert-red active:bg-alert-red/10 uppercase text-xs tracking-wider font-semibold"
                     >
                       <Trash size={18} />
-                      <span className="text-sm">Supprimer</span>
+                      <span>Supprimer</span>
                     </button>
                   </>
                 )}
@@ -274,21 +275,21 @@ export default function AdminPage() {
                   <>
                     <button
                       onClick={() => pauseSession.mutate({ id: session.id })}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 text-yellow-400 active:bg-yellow-500/10 border-r border-white/5"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 text-alert-yellow active:bg-alert-yellow/10 border-r border-labs-terminal uppercase text-xs tracking-wider font-semibold"
                     >
                       <Pause size={18} weight="fill" />
-                      <span className="text-sm">Pause</span>
+                      <span>Pause</span>
                     </button>
                     <button
                       onClick={() => {
-                        if (confirm('Terminer cette session ?')) {
+                        if (confirm('Terminer cette opération ?')) {
                           endSession.mutate({ id: session.id });
                         }
                       }}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 text-red-400 active:bg-red-500/10"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 text-alert-red active:bg-alert-red/10 uppercase text-xs tracking-wider font-semibold"
                     >
                       <Stop size={18} weight="fill" />
-                      <span className="text-sm">Terminer</span>
+                      <span>Terminer</span>
                     </button>
                   </>
                 )}
@@ -297,28 +298,28 @@ export default function AdminPage() {
                   <>
                     <button
                       onClick={() => resumeSession.mutate({ id: session.id })}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 text-green-400 active:bg-green-500/10 border-r border-white/5"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 text-tactical-green active:bg-tactical-green/10 border-r border-labs-terminal uppercase text-xs tracking-wider font-semibold"
                     >
                       <Play size={18} weight="fill" />
-                      <span className="text-sm">Reprendre</span>
+                      <span>Reprendre</span>
                     </button>
                     <button
                       onClick={() => {
-                        if (confirm('Terminer cette session ?')) {
+                        if (confirm('Terminer cette opération ?')) {
                           endSession.mutate({ id: session.id });
                         }
                       }}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 text-red-400 active:bg-red-500/10"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 text-alert-red active:bg-alert-red/10 uppercase text-xs tracking-wider font-semibold"
                     >
                       <Stop size={18} weight="fill" />
-                      <span className="text-sm">Terminer</span>
+                      <span>Terminer</span>
                     </button>
                   </>
                 )}
 
                 {session.status === 'COMPLETED' && (
-                  <div className="flex-1 flex items-center justify-center py-3 text-gray-500">
-                    <span className="text-sm">Session terminée</span>
+                  <div className="flex-1 flex items-center justify-center py-3 text-gray-500 uppercase text-xs tracking-wider">
+                    <span>Opération terminée</span>
                   </div>
                 )}
               </div>
