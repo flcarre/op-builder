@@ -13,6 +13,7 @@
     "@crafted/api": "workspace:*",
     "@crafted/auth": "workspace:*",
     "@crafted/database": "workspace:*",
+    "@prisma/client": "^6.0.1",
     "@crafted/ui": "workspace:*",
     "@phosphor-icons/react": "^2.1.7",
     "@supabase/supabase-js": "^2.91.0",
