@@ -19,12 +19,15 @@ import {
   ArrowLeft,
   X,
   DownloadSimple,
+  Trophy,
+  Crown,
 } from '@phosphor-icons/react';
 import QRCode from 'qrcode';
 
 type DominationSession = NonNullable<RouterOutputs['domination']['getSession']>;
 type DominationTeam = DominationSession['teams'][number];
 type DominationPoint = DominationSession['points'][number];
+type DominationScore = DominationSession['scores'][number];
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -34,7 +37,7 @@ export default function SessionDetailPage({ params }: PageProps) {
   const { id } = use(params);
   const utils = api.useUtils();
 
-  const [activeTab, setActiveTab] = useState<'teams' | 'points' | 'config'>('teams');
+  const [activeTab, setActiveTab] = useState<'teams' | 'points' | 'config' | 'results'>('teams');
   const [newTeamName, setNewTeamName] = useState('');
   const [newTeamColor, setNewTeamColor] = useState('#3b82f6');
   const [newPointName, setNewPointName] = useState('');
@@ -262,6 +265,19 @@ export default function SessionDetailPage({ params }: PageProps) {
               <Gear size={16} className="inline mr-1.5 -mt-0.5" />
               Config
             </button>
+            {(session.status === 'ACTIVE' || session.status === 'PAUSED' || session.status === 'COMPLETED') && (
+              <button
+                onClick={() => setActiveTab('results')}
+                className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                  activeTab === 'results'
+                    ? 'bg-domination-500 text-white'
+                    : 'text-gray-400'
+                }`}
+              >
+                <Trophy size={16} className="inline mr-1.5 -mt-0.5" />
+                Scores
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -551,6 +567,99 @@ export default function SessionDetailPage({ params }: PageProps) {
                     </span>
                   </div>
                 </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Results tab */}
+        {activeTab === 'results' && (
+          <div>
+            {session.status === 'COMPLETED' && (
+              <div className="glass rounded-xl p-4 mb-4 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20">
+                <div className="flex items-center gap-3">
+                  <Trophy size={24} className="text-yellow-500" />
+                  <div>
+                    <p className="text-white font-semibold">Partie terminée</p>
+                    <p className="text-gray-400 text-sm">
+                      {session.endedAt && `Terminée le ${new Date(session.endedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}`}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {session.scores.length === 0 ? (
+              <div className="glass rounded-xl p-8 text-center">
+                <Trophy size={40} className="text-gray-600 mx-auto mb-2" />
+                <p className="text-gray-400 text-sm">Aucun score enregistré</p>
+                <p className="text-gray-500 text-xs mt-1">
+                  Les scores apparaîtront une fois la partie lancée
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {[...session.scores]
+                  .sort((a: DominationScore, b: DominationScore) => b.points - a.points)
+                  .map((score: DominationScore, index: number) => {
+                    const team = session.teams.find((t: DominationTeam) => t.id === score.teamId);
+                    if (!team) return null;
+
+                    const maxScore = Math.max(...session.scores.map((s: DominationScore) => s.points), 1);
+                    const percentage = (score.points / maxScore) * 100;
+                    const isWinner = index === 0 && session.status === 'COMPLETED';
+
+                    return (
+                      <div
+                        key={score.id}
+                        className={`glass rounded-xl p-4 transition-all ${
+                          isWinner ? 'ring-2 ring-yellow-500/50' : ''
+                        }`}
+                        style={{ borderLeft: `4px solid ${team.color}` }}
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="relative">
+                              <div
+                                className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold"
+                                style={{ backgroundColor: team.color }}
+                              >
+                                {index + 1}
+                              </div>
+                              {isWinner && (
+                                <Crown
+                                  size={16}
+                                  weight="fill"
+                                  className="absolute -top-2 -right-2 text-yellow-500"
+                                />
+                              )}
+                            </div>
+                            <div>
+                              <p className="text-white font-medium">{team.name}</p>
+                              {isWinner && (
+                                <p className="text-yellow-500 text-xs font-medium">Vainqueur</p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-2xl font-bold text-white">{score.points}</p>
+                            <p className="text-gray-500 text-xs">points</p>
+                          </div>
+                        </div>
+
+                        {/* Progress bar */}
+                        <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                          <div
+                            className="h-full rounded-full transition-all duration-500"
+                            style={{
+                              width: `${percentage}%`,
+                              backgroundColor: team.color,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
             )}
           </div>
