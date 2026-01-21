@@ -8,6 +8,9 @@ const handler = (req: Request) =>
     endpoint: '/api/trpc',
     req,
     router: appRouter,
+    onError: ({ error, path }) => {
+      console.error(`[tRPC Error] ${path}:`, error.message, error.cause);
+    },
     createContext: async () => {
       const authHeader = req.headers.get('authorization');
 
