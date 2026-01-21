@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { api } from '@/trpc/client';
+import type { RouterOutputs } from '@crafted/api';
 import {
   Plus,
   Flag,
@@ -15,6 +16,8 @@ import {
   PlayCircle,
 } from '@phosphor-icons/react';
 import { useState } from 'react';
+
+type DominationSessionItem = NonNullable<RouterOutputs['domination']['getAllSessions']>[number];
 
 export default function AdminPage() {
   const [newSessionName, setNewSessionName] = useState('');
@@ -213,7 +216,7 @@ export default function AdminPage() {
         )}
 
         <div className="space-y-3">
-          {sessions?.map((session) => (
+          {sessions?.map((session: DominationSessionItem) => (
             <div key={session.id} className="glass rounded-xl overflow-hidden">
               <Link
                 href={`/admin/sessions/${session.id}`}

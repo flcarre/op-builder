@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { api } from '@/trpc/client';
+import type { RouterOutputs } from '@crafted/api';
 import {
   Trophy,
   Flag,
@@ -13,6 +14,12 @@ import {
   ArrowsClockwise,
   CaretRight,
 } from '@phosphor-icons/react';
+
+type DominationSessionItem = NonNullable<RouterOutputs['domination']['getAllSessions']>[number];
+type DominationState = NonNullable<RouterOutputs['domination']['getState']>;
+type DominationStateTeam = DominationState['teams'][number];
+type DominationStatePoint = DominationState['points'][number];
+type DominationStateScore = DominationState['scores'][number];
 
 const REFRESH_INTERVAL_MS = 5000;
 
@@ -144,8 +151,8 @@ function LiveScoreboardContent() {
 
           <div className="space-y-3">
             {sessions
-              ?.filter((s) => s.status === 'ACTIVE' || s.status === 'PAUSED')
-              .map((session) => (
+              ?.filter((s: DominationSessionItem) => s.status === 'ACTIVE' || s.status === 'PAUSED')
+              .map((session: DominationSessionItem) => (
                 <Link
                   key={session.id}
                   href={`/live?session=${session.id}`}
@@ -173,7 +180,7 @@ function LiveScoreboardContent() {
               ))}
 
             {sessions?.filter(
-              (s) => s.status === 'ACTIVE' || s.status === 'PAUSED'
+              (s: DominationSessionItem) => s.status === 'ACTIVE' || s.status === 'PAUSED'
             ).length === 0 && (
               <div className="glass p-8 rounded-xl text-center text-gray-400">
                 Aucune session active
@@ -196,8 +203,8 @@ function LiveScoreboardContent() {
     );
   }
 
-  const sortedScores = [...state.scores].sort((a, b) => b.points - a.points);
-  const maxScore = Math.max(...sortedScores.map((s) => s.points), 1);
+  const sortedScores = [...state.scores].sort((a: DominationStateScore, b: DominationStateScore) => b.points - a.points);
+  const maxScore = Math.max(...sortedScores.map((s: DominationStateScore) => s.points), 1);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 safe-area-inset flex flex-col">
@@ -292,13 +299,13 @@ function LiveScoreboardContent() {
       <div className="flex-1 px-4 py-4 overflow-auto">
         {activeTab === 'scores' ? (
           <div className="space-y-3">
-            {sortedScores.map((score, index) => {
-              const team = state.teams.find((t) => t.id === score.teamId);
+            {sortedScores.map((score: DominationStateScore, index: number) => {
+              const team = state.teams.find((t: DominationStateTeam) => t.id === score.teamId);
               if (!team) return null;
 
               const percentage = (score.points / maxScore) * 100;
               const controlledCount = state.points.filter(
-                (p) => p.controlledBy?.id === team.id
+                (p: DominationStatePoint) => p.controlledBy?.id === team.id
               ).length;
 
               return (
@@ -353,7 +360,7 @@ function LiveScoreboardContent() {
           </div>
         ) : (
           <div className="space-y-3">
-            {state.points.map((point) => (
+            {state.points.map((point: DominationStatePoint) => (
               <div
                 key={point.id}
                 className="glass rounded-xl p-4 transition-all"
@@ -426,8 +433,8 @@ function LiveScoreboardContent() {
       {/* Résumé sticky en bas sur mobile */}
       <div className="sticky bottom-0 bg-slate-950/90 backdrop-blur-lg border-t border-white/5 px-4 py-3">
         <div className="flex justify-around">
-          {sortedScores.slice(0, 3).map((score, index) => {
-            const team = state.teams.find((t) => t.id === score.teamId);
+          {sortedScores.slice(0, 3).map((score: DominationStateScore, index: number) => {
+            const team = state.teams.find((t: DominationStateTeam) => t.id === score.teamId);
             if (!team) return null;
 
             return (

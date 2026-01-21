@@ -2,6 +2,7 @@
 
 import { use, useState } from 'react';
 import { api } from '@/trpc/client';
+import type { RouterOutputs } from '@crafted/api';
 import {
   Flag,
   CheckCircle,
@@ -10,6 +11,9 @@ import {
   ArrowLeft,
 } from '@phosphor-icons/react';
 import Link from 'next/link';
+
+type DominationSession = NonNullable<RouterOutputs['domination']['getSession']>;
+type DominationTeam = DominationSession['teams'][number];
 
 interface PageProps {
   params: Promise<{ token: string }>;
@@ -51,7 +55,7 @@ export default function CapturePage({ params }: PageProps) {
 
   const lastCaptureTeamId = point?.captures?.[0]?.teamId;
   const currentController = lastCaptureTeamId
-    ? session?.teams.find((t) => t.id === lastCaptureTeamId)
+    ? session?.teams.find((t: DominationTeam) => t.id === lastCaptureTeamId)
     : null;
 
   if (isLoading) {
@@ -114,7 +118,7 @@ export default function CapturePage({ params }: PageProps) {
   }
 
   if (captureSuccess) {
-    const capturedTeam = session?.teams.find((t) => t.id === selectedTeamId);
+    const capturedTeam = session?.teams.find((t: DominationTeam) => t.id === selectedTeamId);
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center safe-area-inset p-4">
         <div className="glass p-8 rounded-2xl text-center max-w-sm w-full animate-capture">
@@ -221,7 +225,7 @@ export default function CapturePage({ params }: PageProps) {
             Sélectionnez votre équipe
           </p>
           <div className="grid grid-cols-2 gap-3">
-            {session?.teams.map((team) => {
+            {session?.teams.map((team: DominationTeam) => {
               const isCurrentController = currentController?.id === team.id;
               const isSelected = selectedTeamId === team.id;
 
