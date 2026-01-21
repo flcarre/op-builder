@@ -390,19 +390,21 @@ function LiveScoreboardContent() {
                       <span className="text-white font-medium">
                         {point.name}
                       </span>
-                      {point.controlledBy ? (
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          <div
-                            className="w-2 h-2 rounded-full"
-                            style={{ backgroundColor: point.controlledBy.color }}
-                          />
-                          <span className="text-sm text-gray-400">
-                            {point.controlledBy.name}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-sm text-gray-500">Non capturé</span>
-                      )}
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        {point.controlledBy ? (
+                          <>
+                            <div
+                              className="w-2 h-2 rounded-full"
+                              style={{ backgroundColor: point.controlledBy.color }}
+                            />
+                            <span className="text-sm text-gray-400">
+                              {point.controlledBy.name}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-sm text-gray-500">Non capturé</span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   {point.controlledBy && (
