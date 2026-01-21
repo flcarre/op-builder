@@ -25,15 +25,17 @@ export default function CapturePage({ params }: PageProps) {
   const [captureSuccess, setCaptureSuccess] = useState(false);
   const [captureError, setCaptureError] = useState<string | null>(null);
 
-  const { data: point, isLoading, error } = api.domination.getPointByToken.useQuery(
+  const { data: point, isLoading: isLoadingPoint, error } = api.domination.getPointByToken.useQuery(
     { qrToken: token },
     { retry: false }
   );
 
-  const { data: session } = api.domination.getSession.useQuery(
+  const { data: session, isLoading: isLoadingSession } = api.domination.getSession.useQuery(
     { id: point?.sessionId ?? '' },
     { enabled: !!point?.sessionId }
   );
+
+  const isLoading = isLoadingPoint || (!!point?.sessionId && isLoadingSession);
 
   const capturePoint = api.domination.capturePoint.useMutation({
     onSuccess: () => {
