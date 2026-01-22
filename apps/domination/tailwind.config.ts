@@ -10,6 +10,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // TerraGroup Labs Brand Colors
+        terragroup: {
+          navy: '#1e3a5f',
+          'navy-dark': '#15294a',
+          'navy-light': '#2d4a6f',
+        },
         // TerraGroup Labs - Dark Theme
         labs: {
           black: '#0a0a0f',
@@ -119,6 +125,8 @@ const config: Config = {
         'glow-red-lg': '0 0 30px rgba(220, 38, 38, 0.5)',
         'glow-cyan': '0 0 20px rgba(6, 182, 212, 0.3)',
         'glow-green': '0 0 20px rgba(34, 197, 94, 0.3)',
+        'glow-navy': '0 0 20px rgba(30, 58, 95, 0.3)',
+        'glow-navy-lg': '0 0 30px rgba(30, 58, 95, 0.5)',
         'tactical': '0 1px 2px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0, 0, 0, 0.1)',
         'tactical-lg': '0 2px 4px rgba(0, 0, 0, 0.05), 0 8px 16px rgba(0, 0, 0, 0.1)',
       },

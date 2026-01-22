@@ -7,7 +7,6 @@ import type { RouterOutputs } from '@crafted/api';
 import {
   Flag,
   Users,
-  MapPin,
   Plus,
   Trash,
   QrCode,
@@ -159,7 +158,7 @@ export default function SessionDetailPage({ params }: PageProps) {
     return (
       <div className="min-h-screen bg-theme-primary flex items-center justify-center safe-area-inset">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-alert-red mx-auto mb-3" />
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 spinner-accent mx-auto mb-3" />
           <p className="text-theme-muted text-sm uppercase tracking-widest">Chargement...</p>
         </div>
       </div>
@@ -174,7 +173,7 @@ export default function SessionDetailPage({ params }: PageProps) {
           <p className="text-theme-muted uppercase tracking-wide">Opération non trouvée</p>
           <Link
             href="/admin"
-            className="inline-flex items-center gap-2 text-alert-red mt-4 uppercase tracking-wider text-sm"
+            className="inline-flex items-center gap-2 text-accent mt-4 uppercase tracking-wider text-sm"
           >
             <ArrowLeft size={16} />
             Retour
@@ -239,7 +238,7 @@ export default function SessionDetailPage({ params }: PageProps) {
               onClick={() => setActiveTab('teams')}
               className={`flex-1 py-2 px-3 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors ${
                 activeTab === 'teams'
-                  ? 'bg-alert-red text-white'
+                  ? 'tab-active'
                   : 'text-theme-muted'
               }`}
             >
@@ -250,7 +249,7 @@ export default function SessionDetailPage({ params }: PageProps) {
               onClick={() => setActiveTab('points')}
               className={`flex-1 py-2 px-3 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors ${
                 activeTab === 'points'
-                  ? 'bg-alert-red text-white'
+                  ? 'tab-active'
                   : 'text-theme-muted'
               }`}
             >
@@ -261,7 +260,7 @@ export default function SessionDetailPage({ params }: PageProps) {
               onClick={() => setActiveTab('config')}
               className={`flex-1 py-2 px-3 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors ${
                 activeTab === 'config'
-                  ? 'bg-alert-red text-white'
+                  ? 'tab-active'
                   : 'text-theme-muted'
               }`}
             >
@@ -273,7 +272,7 @@ export default function SessionDetailPage({ params }: PageProps) {
                 onClick={() => setActiveTab('results')}
                 className={`flex-1 py-2 px-3 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors ${
                   activeTab === 'results'
-                    ? 'bg-alert-red text-white'
+                    ? 'tab-active'
                     : 'text-theme-muted'
                 }`}
               >

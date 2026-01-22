@@ -120,7 +120,7 @@ export default function AdminPage() {
               <ArrowLeft size={18} />
             </Link>
             <h1 className="text-lg font-bold text-theme-primary flex items-center gap-2 uppercase tracking-wider">
-              <ShieldCheck size={20} weight="fill" className="text-alert-red" />
+              <ShieldCheck size={20} weight="fill" className="text-accent" />
               Centre de Commande
             </h1>
           </div>
@@ -205,7 +205,7 @@ export default function AdminPage() {
         {/* Sessions list */}
         {isLoading && (
           <div className="glass p-8 rounded-xl text-center text-theme-muted border-theme-accent">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-alert-red mx-auto mb-3" />
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 spinner-accent mx-auto mb-3" />
             <p className="text-sm uppercase tracking-widest">Chargement...</p>
           </div>
         )}

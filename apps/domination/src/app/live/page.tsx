@@ -30,7 +30,7 @@ function RefreshIndicator({ isFetching }: { isFetching: boolean }) {
     <div className="flex items-center gap-1.5 text-theme-muted text-xs font-mono">
       <ArrowsClockwise
         size={12}
-        className={isFetching ? 'animate-spin text-alert-red' : ''}
+        className={isFetching ? 'animate-spin text-accent' : ''}
       />
       <span className="uppercase tracking-wider">{isFetching ? 'Sync...' : '5s'}</span>
     </div>
@@ -113,10 +113,10 @@ function CountdownTimer({ endsAt }: { endsAt: Date }) {
     <span
       className={`font-mono text-2xl font-bold tracking-wider ${
         isExpired
-          ? 'text-alert-red'
+          ? 'text-accent'
           : isUrgent
-            ? 'text-alert-red animate-pulse'
-            : 'text-theme-primary text-glow-red'
+            ? 'text-accent animate-pulse'
+            : 'text-accent'
       }`}
     >
       {timeLeft}
@@ -218,7 +218,7 @@ function LiveScoreboardContent() {
     return (
       <div className="min-h-screen bg-theme-primary flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-alert-red mx-auto mb-3" />
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 spinner-accent mx-auto mb-3" />
           <p className="text-theme-muted text-sm uppercase tracking-widest">Chargement...</p>
         </div>
       </div>
@@ -279,11 +279,11 @@ function LiveScoreboardContent() {
           </div>
         </div>
 
-        {/* Timer Banner - Alert Red style */}
+        {/* Timer Banner - Theme accent style */}
         {state.session.endsAt && state.session.status === 'ACTIVE' && (
           <div className="px-4 pb-3">
-            <div className="bg-alert-red/10 border border-alert-red/30 rounded-lg px-4 py-2 flex items-center justify-center gap-3">
-              <Timer size={20} className="text-alert-red" />
+            <div className="bg-accent-10 border border-accent-30 rounded-lg px-4 py-2 flex items-center justify-center gap-3">
+              <Timer size={20} className="text-accent" />
               <CountdownTimer endsAt={new Date(state.session.endsAt)} />
             </div>
           </div>
@@ -297,7 +297,7 @@ function LiveScoreboardContent() {
             onClick={() => setActiveTab('scores')}
             className={`flex-1 py-2.5 px-4 rounded-md text-sm font-semibold uppercase tracking-wider transition-all ${
               activeTab === 'scores'
-                ? 'bg-alert-red text-white glow-red'
+                ? 'tab-active'
                 : 'text-theme-muted hover:text-theme-primary'
             }`}
           >
@@ -308,7 +308,7 @@ function LiveScoreboardContent() {
             onClick={() => setActiveTab('points')}
             className={`flex-1 py-2.5 px-4 rounded-md text-sm font-semibold uppercase tracking-wider transition-all ${
               activeTab === 'points'
-                ? 'bg-alert-red text-white glow-red'
+                ? 'tab-active'
                 : 'text-theme-muted hover:text-theme-primary'
             }`}
           >
@@ -502,7 +502,7 @@ export default function LiveScoreboardPage() {
       fallback={
         <div className="min-h-screen bg-theme-primary flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-alert-red mx-auto mb-3" />
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 spinner-accent mx-auto mb-3" />
             <p className="text-theme-muted text-xs uppercase tracking-widest">Initialisation...</p>
           </div>
         </div>

@@ -67,7 +67,7 @@ export default function CapturePage({ params }: PageProps) {
     return (
       <div className="min-h-screen bg-theme-primary flex items-center justify-center safe-area-inset">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-alert-red mx-auto mb-4" />
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 spinner-accent mx-auto mb-4" />
           <p className="text-theme-muted text-sm uppercase tracking-widest">Identification...</p>
         </div>
       </div>
