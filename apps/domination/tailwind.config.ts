@@ -29,6 +29,7 @@ const config: Config = {
           neon: '#ff3b3b',
           orange: '#f97316',
           yellow: '#eab308',
+          green: '#22c55e',
         },
         // Tactical colors
         tactical: {
