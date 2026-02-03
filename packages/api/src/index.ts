@@ -12,6 +12,7 @@ import { checkinRouter } from './routers/checkin';
 import { completionRouter } from './routers/completion';
 import { leaderboardRouter } from './routers/leaderboard';
 import { dominationRouter } from './routers/domination';
+import { accessRouter } from './routers/access';
 
 export const appRouter = router({
   example: exampleRouter,
@@ -26,6 +27,7 @@ export const appRouter = router({
   completion: completionRouter,
   leaderboard: leaderboardRouter,
   domination: dominationRouter,
+  access: accessRouter,
 });
 
 export type AppRouter = typeof appRouter;

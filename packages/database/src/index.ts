@@ -28,3 +28,4 @@ export * from './repositories/attempt.repository';
 export * from './repositories/sabotage.repository';
 export * from './repositories/gps.repository';
 export * from './repositories/domination.repository';
+export * from './repositories/access.repository';

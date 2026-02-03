@@ -12,3 +12,4 @@ export * from './completion.service';
 export * from './leaderboard.service';
 export * from './progress.service';
 export * from './domination.service';
+export * from './access.service';

@@ -51,8 +51,11 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
-        <div className="text-white">Chargement...</div>
+      <div className="min-h-screen bg-theme-primary flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 spinner-accent mx-auto mb-3" />
+          <p className="text-theme-muted text-sm uppercase tracking-widest">Chargement...</p>
+        </div>
       </div>
     );
   }
@@ -81,58 +84,58 @@ export function AdminLoginForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
-      <div className="glass p-8 rounded-2xl w-full max-w-md">
+    <div className="min-h-screen bg-theme-primary flex items-center justify-center p-4">
+      <div className="glass p-8 rounded-2xl w-full max-w-md border-theme-accent">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-domination-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Lock size={32} className="text-domination-500" />
+          <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Lock size={32} className="text-accent" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Administration</h1>
-          <p className="text-gray-400 mt-2">Mode Domination</p>
+          <h1 className="text-2xl font-bold text-theme-primary uppercase tracking-wide">Administration</h1>
+          <p className="text-theme-muted mt-2 uppercase tracking-widest text-xs">Mode Domination</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-xs font-medium text-theme-muted mb-2 uppercase tracking-widest">
               Identifiant
             </label>
             <div className="relative">
               <User
                 size={20}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-muted"
               />
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Entrez votre identifiant"
-                className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-domination-500"
+                className="input-labs w-full pl-10 pr-4 py-3"
                 autoComplete="username"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-xs font-medium text-theme-muted mb-2 uppercase tracking-widest">
               Mot de passe
             </label>
             <div className="relative">
               <Lock
                 size={20}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-muted"
               />
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Entrez votre mot de passe"
-                className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-12 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-domination-500"
+                className="input-labs w-full pl-10 pr-12 py-3"
                 autoComplete="current-password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-theme-muted hover:text-theme-primary transition-colors"
               >
                 {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
               </button>
@@ -140,14 +143,14 @@ export function AdminLoginForm() {
           </div>
 
           {error && (
-            <div className="bg-red-500/20 border border-red-500/30 rounded-lg px-4 py-3 text-red-400 text-sm">
+            <div className="bg-alert-red/10 border border-alert-red/30 rounded-lg px-4 py-3 text-alert-red text-sm">
               {error}
             </div>
           )}
 
           <button
             type="submit"
-            className="w-full bg-domination-500 hover:bg-domination-600 text-white py-3 rounded-lg font-medium transition-colors"
+            className="w-full btn-primary text-white py-3 rounded-lg font-semibold uppercase tracking-wider"
           >
             Se connecter
           </button>

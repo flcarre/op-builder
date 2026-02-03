@@ -369,6 +369,8 @@ model DominationSession {
   teams           DominationTeam[]
   captures        DominationCapture[]
   scores          DominationScore[]
+  accessPoints    AccessPoint[]
+  simpleAccesses  SimpleAccess[]
 
   @@index([status])
 }
@@ -437,4 +439,58 @@ model DominationScore {
   @@unique([sessionId, teamId])
   @@index([sessionId])
   @@index([teamId])
+}
+
+// ============================================
+// Access Levels System (Password-based unlocking)
+// ============================================
+
+model AccessPoint {
+  id          String            @id @default(cuid())
+  sessionId   String
+  session     DominationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  order       Int               @default(0)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  levels      AccessLevel[]
+
+  @@index([sessionId])
+}
+
+model AccessLevel {
+  id            String      @id @default(cuid())
+  accessPointId String
+  accessPoint   AccessPoint @relation(fields: [accessPointId], references: [id], onDelete: Cascade)
+  level         Int
+  name          String
+  password      String
+  qrToken       String      @unique @default(cuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([accessPointId, level])
+  @@index([accessPointId])
+  @@index([qrToken])
+}
+
+// ============================================
+// Simple Access (Single password validation)
+// ============================================
+
+model SimpleAccess {
+  id          String            @id @default(cuid())
+  sessionId   String
+  session     DominationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  password    String
+  qrToken     String            @unique @default(cuid())
+  order       Int               @default(0)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([sessionId])
+  @@index([qrToken])
 }

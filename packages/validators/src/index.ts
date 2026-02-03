@@ -9,3 +9,4 @@ export * from './checkin.validator';
 export * from './completion.validator';
 export * from './leaderboard.validator';
 export * from './domination.validator';
+export * from './access.validator';
