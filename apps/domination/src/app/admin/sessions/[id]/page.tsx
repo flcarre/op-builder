@@ -579,6 +579,76 @@ export default function SessionDetailPage({ params }: PageProps) {
         {/* Points tab */}
         {activeTab === 'points' && (
           <div>
+            {/* Domination Control */}
+            {session.status !== 'COMPLETED' && (
+              <div className="glass rounded-xl p-4 border-theme-accent mb-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Target size={20} className="text-accent" />
+                    <span className="font-semibold text-theme-primary uppercase tracking-wide">
+                      Domination
+                    </span>
+                  </div>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-xs uppercase tracking-wider ${
+                      session.scoringEnabled
+                        ? 'bg-tactical-green/20 text-tactical-green'
+                        : 'bg-gray-500/20 text-gray-400'
+                    }`}
+                  >
+                    {session.scoringEnabled ? 'En cours' : 'Arrêtée'}
+                  </span>
+                </div>
+
+                {!session.scoringEnabled && (
+                  <div className="mb-3">
+                    <label className="block text-xs text-theme-muted mb-1.5 uppercase tracking-widest">
+                      Durée (optionnel)
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="number"
+                        value={editDuration}
+                        onChange={(e) => setEditDuration(e.target.value ? parseInt(e.target.value) : '')}
+                        min={1}
+                        max={480}
+                        placeholder="Illimitée"
+                        className="input-labs flex-1 px-4 py-2 text-sm"
+                      />
+                      <span className="flex items-center text-theme-muted text-sm">min</span>
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  onClick={() => {
+                    if (!session.scoringEnabled && editDuration) {
+                      updateSession.mutate({ id, durationMinutes: editDuration || null });
+                    }
+                    handleToggleScoring();
+                  }}
+                  disabled={setScoringEnabled.isPending || updateSession.isPending}
+                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold uppercase tracking-wider text-sm active:opacity-80 disabled:opacity-50 ${
+                    session.scoringEnabled
+                      ? 'bg-alert-red/10 border border-alert-red/30 text-alert-red'
+                      : 'btn-primary text-white'
+                  }`}
+                >
+                  {session.scoringEnabled ? (
+                    <>
+                      <Pause size={18} />
+                      Arrêter la domination
+                    </>
+                  ) : (
+                    <>
+                      <Play size={18} />
+                      Lancer la domination
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
             <form onSubmit={handleCreatePoint} className="mb-4">
               <div className="glass rounded-xl p-4 border-theme-accent">
                 <div className="flex gap-2">
@@ -1124,53 +1194,6 @@ export default function SessionDetailPage({ params }: PageProps) {
                     </span>
                   </div>
                 </div>
-
-                {/* Scoring control */}
-                {session.status !== 'COMPLETED' && (
-                  <div className="mt-6 pt-4 border-t border-theme-accent">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <Target size={18} className="text-theme-muted" />
-                        <span className="text-sm font-semibold text-theme-primary uppercase tracking-wide">
-                          Scoring Domination
-                        </span>
-                      </div>
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-xs uppercase tracking-wider ${
-                          session.scoringEnabled
-                            ? 'bg-tactical-green/20 text-tactical-green'
-                            : 'bg-gray-500/20 text-gray-400'
-                        }`}
-                      >
-                        {session.scoringEnabled ? 'Actif' : 'Inactif'}
-                      </span>
-                    </div>
-                    <p className="text-xs text-theme-muted mb-3">
-                      Active ou désactive le scoring des objectifs Domination indépendamment du statut de la session.
-                    </p>
-                    <button
-                      onClick={handleToggleScoring}
-                      disabled={setScoringEnabled.isPending}
-                      className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold uppercase tracking-wider text-sm active:opacity-80 disabled:opacity-50 ${
-                        session.scoringEnabled
-                          ? 'bg-alert-yellow/10 border border-alert-yellow/30 text-alert-yellow'
-                          : 'btn-primary text-white'
-                      }`}
-                    >
-                      {session.scoringEnabled ? (
-                        <>
-                          <Pause size={18} />
-                          Désactiver le scoring
-                        </>
-                      ) : (
-                        <>
-                          <Play size={18} />
-                          Activer le scoring
-                        </>
-                      )}
-                    </button>
-                  </div>
-                )}
 
                 {/* Delete session */}
                 <div className="mt-6 pt-4 border-t border-alert-red/30">
