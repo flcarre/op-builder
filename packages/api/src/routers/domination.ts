@@ -9,6 +9,7 @@ import {
   captureDominationPointSchema,
   dominationSessionByIdSchema,
   dominationPointByTokenSchema,
+  setScoringEnabledSchema,
 } from '@crafted/validators';
 import {
   createDominationSession,
@@ -20,6 +21,7 @@ import {
   pauseDominationSession,
   resumeDominationSession,
   endDominationSession,
+  setScoringEnabled,
   createDominationTeam,
   updateDominationTeam,
   deleteDominationTeam,
@@ -68,6 +70,10 @@ export const dominationRouter = router({
   endSession: publicProcedure
     .input(dominationSessionByIdSchema)
     .mutation(({ input }) => endDominationSession(input.id)),
+
+  setScoringEnabled: publicProcedure
+    .input(setScoringEnabledSchema)
+    .mutation(({ input }) => setScoringEnabled(input.id, input.enabled)),
 
   createTeam: publicProcedure
     .input(createDominationTeamSchema)

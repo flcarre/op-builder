@@ -26,6 +26,9 @@ import {
   Eye,
   EyeSlash,
   Warning,
+  Play,
+  Pause,
+  Target,
 } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
 import QRCode from 'qrcode';
@@ -126,6 +129,18 @@ export default function SessionDetailPage({ params }: PageProps) {
       router.push('/admin');
     },
   });
+
+  const setScoringEnabled = api.domination.setScoringEnabled.useMutation({
+    onSuccess: () => utils.domination.getSession.invalidate({ id }),
+  });
+
+  const handleToggleScoring = () => {
+    if (!session) return;
+    setScoringEnabled.mutate({
+      id,
+      enabled: !session.scoringEnabled,
+    });
+  };
 
   const handleDeleteSession = () => {
     if (confirm('Supprimer définitivement cette opération ? Cette action est irréversible.')) {
@@ -1109,6 +1124,53 @@ export default function SessionDetailPage({ params }: PageProps) {
                     </span>
                   </div>
                 </div>
+
+                {/* Scoring control */}
+                {session.status !== 'COMPLETED' && (
+                  <div className="mt-6 pt-4 border-t border-theme-accent">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Target size={18} className="text-theme-muted" />
+                        <span className="text-sm font-semibold text-theme-primary uppercase tracking-wide">
+                          Scoring Domination
+                        </span>
+                      </div>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs uppercase tracking-wider ${
+                          session.scoringEnabled
+                            ? 'bg-tactical-green/20 text-tactical-green'
+                            : 'bg-gray-500/20 text-gray-400'
+                        }`}
+                      >
+                        {session.scoringEnabled ? 'Actif' : 'Inactif'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-theme-muted mb-3">
+                      Active ou désactive le scoring des objectifs Domination indépendamment du statut de la session.
+                    </p>
+                    <button
+                      onClick={handleToggleScoring}
+                      disabled={setScoringEnabled.isPending}
+                      className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold uppercase tracking-wider text-sm active:opacity-80 disabled:opacity-50 ${
+                        session.scoringEnabled
+                          ? 'bg-alert-yellow/10 border border-alert-yellow/30 text-alert-yellow'
+                          : 'btn-primary text-white'
+                      }`}
+                    >
+                      {session.scoringEnabled ? (
+                        <>
+                          <Pause size={18} />
+                          Désactiver le scoring
+                        </>
+                      ) : (
+                        <>
+                          <Play size={18} />
+                          Activer le scoring
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
 
                 {/* Delete session */}
                 <div className="mt-6 pt-4 border-t border-alert-red/30">

@@ -96,8 +96,30 @@ export async function endDominationSession(id: string) {
 
   return dominationRepository.updateSession(id, {
     status: 'COMPLETED',
+    scoringEnabled: false,
     endedAt: new Date(),
   });
+}
+
+export async function setScoringEnabled(id: string, enabled: boolean) {
+  const session = await dominationRepository.findSessionById(id);
+  if (!session) {
+    throw new Error('Session not found');
+  }
+  if (session.status === 'COMPLETED') {
+    throw new Error('Cannot modify scoring on completed session');
+  }
+
+  const updateData: { scoringEnabled: boolean; status?: 'ACTIVE'; startedAt?: Date } = {
+    scoringEnabled: enabled,
+  };
+
+  if (enabled && session.status === 'DRAFT') {
+    updateData.status = 'ACTIVE';
+    updateData.startedAt = new Date();
+  }
+
+  return dominationRepository.updateSession(id, updateData);
 }
 
 export async function createDominationTeam(input: CreateDominationTeamInput) {
@@ -257,6 +279,7 @@ export async function getDominationSessionState(sessionId: string) {
       id: session.id,
       name: session.name,
       status: session.status,
+      scoringEnabled: session.scoringEnabled,
       startedAt: session.startedAt,
       durationMinutes: session.durationMinutes,
       tickIntervalSec: session.tickIntervalSec,
@@ -298,7 +321,7 @@ export async function checkAndEndExpiredSession(sessionId: string) {
 
 export async function calculateAndUpdateDominationScores(sessionId: string) {
   const session = await dominationRepository.findSessionById(sessionId);
-  if (!session || session.status !== 'ACTIVE') {
+  if (!session || !session.scoringEnabled) {
     return null;
   }
 

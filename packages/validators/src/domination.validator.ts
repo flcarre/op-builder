@@ -24,6 +24,11 @@ export const updateDominationSessionSchema = z.object({
   durationMinutes: z.number().int().min(1).max(480).nullable().optional(),
 });
 
+export const setScoringEnabledSchema = z.object({
+  id: z.string(),
+  enabled: z.boolean(),
+});
+
 export const createDominationTeamSchema = z.object({
   sessionId: z.string(),
   name: z.string().min(2).max(50),
@@ -87,3 +92,4 @@ export type ReorderDominationPointsInput = z.infer<typeof reorderDominationPoint
 export type CaptureDominationPointInput = z.infer<typeof captureDominationPointSchema>;
 export type DominationSessionByIdInput = z.infer<typeof dominationSessionByIdSchema>;
 export type DominationPointByTokenInput = z.infer<typeof dominationPointByTokenSchema>;
+export type SetScoringEnabledInput = z.infer<typeof setScoringEnabledSchema>;

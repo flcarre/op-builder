@@ -14,6 +14,8 @@ import {
   ArrowsClockwise,
   CaretRight,
   Crosshair,
+  Target,
+  Pause,
 } from '@phosphor-icons/react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
@@ -256,13 +258,36 @@ function LiveScoreboardContent() {
                     {state.session.name}
                   </h1>
                 </div>
-                <p className="text-xs text-theme-muted uppercase tracking-widest">
-                  {state.session.status === 'ACTIVE'
-                    ? 'Opération en cours'
-                    : state.session.status === 'PAUSED'
-                      ? 'Opération suspendue'
-                      : 'Opération terminée'}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs text-theme-muted uppercase tracking-widest">
+                    {state.session.status === 'ACTIVE'
+                      ? 'Opération en cours'
+                      : state.session.status === 'PAUSED'
+                        ? 'Opération suspendue'
+                        : 'Opération terminée'}
+                  </p>
+                  {state.session.status === 'ACTIVE' && (
+                    <span
+                      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wider ${
+                        state.session.scoringEnabled
+                          ? 'bg-tactical-green/20 text-tactical-green'
+                          : 'bg-alert-yellow/20 text-alert-yellow'
+                      }`}
+                    >
+                      {state.session.scoringEnabled ? (
+                        <>
+                          <Target size={10} weight="fill" />
+                          Scoring
+                        </>
+                      ) : (
+                        <>
+                          <Pause size={10} weight="fill" />
+                          Scoring off
+                        </>
+                      )}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
