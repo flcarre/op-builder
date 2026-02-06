@@ -172,35 +172,6 @@ export default function AccessPage({ params }: PageProps) {
     );
   }
 
-  if (data.session.status !== 'ACTIVE') {
-    return (
-      <div className="min-h-screen bg-theme-primary flex items-center justify-center safe-area-inset p-4">
-        <div className="glass rounded-2xl p-8 text-center max-w-sm w-full border border-alert-yellow/30">
-          <div className="w-16 h-16 rounded-xl bg-alert-yellow/20 mx-auto mb-4 flex items-center justify-center">
-            <Lock size={40} className="text-alert-yellow" />
-          </div>
-          <h1 className="text-xl font-bold text-theme-primary mb-2 uppercase tracking-wide">
-            {data.level.accessPoint.name}
-          </h1>
-          <p className="text-theme-muted text-sm mb-6">
-            {data.session.status === 'DRAFT'
-              ? "L'opération n'a pas encore commencé."
-              : data.session.status === 'PAUSED'
-                ? "L'opération est suspendue."
-                : "L'opération est terminée."}
-          </p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 bg-theme-tertiary active:opacity-80 text-theme-primary px-5 py-3 rounded-xl transition-colors uppercase tracking-wider text-sm font-semibold"
-          >
-            <ArrowLeft size={18} />
-            Retour
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   if (isUnlocked) {
     return (
       <div className="min-h-screen bg-theme-primary flex items-center justify-center safe-area-inset p-4">
